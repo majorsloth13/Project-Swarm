@@ -30,6 +30,12 @@ public class EnemyChaseState : IEnemyState
         float dir = Mathf.Sign(ctx.Player.position.x - ctx.transform.position.x);
 
         ctx.rb.linearVelocity = new Vector2(dir * ctx.speed, ctx.rb.linearVelocity.y);
+
+        /*ctx.transform.localScale = new Vector3(
+            Mathf.Abs(ctx.transform.localScale.x) * dir,
+            ctx.transform.localScale.y,
+            ctx.transform.localScale.z
+        );*/
     }
 
     public void Exit()

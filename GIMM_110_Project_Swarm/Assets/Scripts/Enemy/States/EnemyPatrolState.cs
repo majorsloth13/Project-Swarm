@@ -4,13 +4,17 @@ public class EnemyPatrolState : IEnemyState
 {
     private EnemyStateMachine ctx;
     private int direction = 1;
+    private Vector3 startingPosition;
 
     public EnemyPatrolState(EnemyStateMachine ctx)
     {
         this.ctx = ctx;
     }
 
-    public void Enter() { }
+    public void Enter()
+    {
+        startingPosition = ctx.transform.position;
+    }
 
     public void Update()
     {
@@ -29,16 +33,18 @@ public class EnemyPatrolState : IEnemyState
 
         bool isEdge = !hitGround;
 
+        MonoBehaviour.print("isEdge & hitGround: " + isEdge + " & " + hitGround);
+
         if (isEdge)
         {
             Flip();
         }
-        else if (ctx.transform.position.x <= ctx.leftBound)
+        else if (ctx.transform.position.x <= startingPosition.x + ctx.leftBound)
         {
             direction = 1;
             FlipToDirection(1);
         }
-        else if (ctx.transform.position.x >= ctx.rightBound)
+        else if (ctx.transform.position.x >= startingPosition.x + ctx.rightBound)
         {
             direction = -1;
             FlipToDirection(-1);
@@ -57,7 +63,7 @@ public class EnemyPatrolState : IEnemyState
 
     private void Flip()
     {
-        direction *= -1;
+        direction = -1;
         FlipToDirection(direction);
     }
 
