@@ -28,12 +28,24 @@ public class PlayerStateMachine : MonoBehaviour
     [Tooltip("How long a jump press is buffered before landing.")]
     public float jumpBufferTime = 0.12f;
 
+    [Header("Gun Attack")]
+    public GameObject bulletPrefab;
+    public Transform gunFirePoint;
+    public Transform gunTransform;
+    //public float gunFireRate = 0.25f;
+    public float bulletLifetime = 2f;
+    
+    // adjustable cooldown
+    public float gunCooldown = 0.25f;     
+   [HideInInspector] public float gunCooldownTimer = 0f;
+
     // runtime timers
     internal float coyoteTimer = 0f;
     internal float jumpBufferTimer = 0f;
 
     // states
     private IPlayerState currentState;
+    public IPlayerState previousState;
 
     // public flags
     public bool HasDoubleJump = true;   // rset when landing
@@ -79,6 +91,32 @@ public class PlayerStateMachine : MonoBehaviour
             jumpBufferTimer = jumpBufferTime;
         }
 
+        // cooldown countdown
+        if (gunCooldownTimer > 0f)
+        {
+            gunCooldownTimer -= Time.deltaTime;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            SwitchState(new GunAttackState(
+                this,
+                //gunFireRate,
+                gunCooldown,
+                bulletPrefab,
+                gunFirePoint,
+                gunTransform,
+                bulletLifetime
+            ));
+            return;
+        }
+
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mouseWorld - gunTransform.position).normalized;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+
         currentState?.Update();
     }
 
@@ -101,17 +139,18 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void SwitchState(IPlayerState newState)
     {
-        currentState?.Exit();
-        currentState = newState;
-        currentState.Enter();
-        /*if (currentState != null)
+        if (newState == null)
         {
-            currentState.Exit();
+            Debug.LogWarning("SwitchState called with null!");
+            return;
         }
 
+        currentState?.Exit();
+        previousState = currentState; // << assign previous
         currentState = newState;
-        currentState.Enter();*/
+        currentState.Enter();
     }
+
 
     // Called by states to check & consume buffered jump
     public bool TryConsumeJumpBuffer()
