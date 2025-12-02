@@ -1,9 +1,9 @@
-using System.Collections;
+/*using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
 
-/*[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody))]
 public class Movement_Slash : MonoBehaviour
 {
 

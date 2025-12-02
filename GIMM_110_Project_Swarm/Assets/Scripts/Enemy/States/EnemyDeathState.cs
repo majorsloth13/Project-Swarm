@@ -14,13 +14,16 @@ public class EnemyDeathState : IEnemyState
         // Stop movement
         enemy.rb.linearVelocity = Vector2.zero;
 
-        // Disable collider (optional)
+        // Disable collider
         Collider2D col = enemy.GetComponent<Collider2D>();
         if (col) col.enabled = false;
 
-        // Play animation
+        // Play death animation
         Animator anim = enemy.GetComponent<Animator>();
         if (anim) anim.SetTrigger("die");
+
+        // Increment kill counter
+        KillCounter.Instance?.AddKill();
 
         // Destroy enemy after animation
         enemy.StartCoroutine(DestroyAfterDelay());
@@ -32,7 +35,7 @@ public class EnemyDeathState : IEnemyState
 
     private System.Collections.IEnumerator DestroyAfterDelay()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.0f); // adjust to match animation length
         GameObject.Destroy(enemy.gameObject);
     }
 }

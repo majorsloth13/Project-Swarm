@@ -7,6 +7,7 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Movement Speeds (units/second)")]
     public float verticalSpeed = 10f;
     public float horizontalSpeed = 10f;
+
     [Header("Jump")]
     public float jumpForce = 12f;
     public float airMoveSpeed = 8f;
@@ -34,7 +35,11 @@ public class PlayerStateMachine : MonoBehaviour
     public Transform gunTransform;
     //public float gunFireRate = 0.25f;
     public float bulletLifetime = 2f;
-    
+
+    [Header("Power-Up")]
+    public bool powerUpActive = false; // set true when player picks up power
+
+
     // adjustable cooldown
     public float gunCooldown = 0.25f;     
    [HideInInspector] public float gunCooldownTimer = 0f;
@@ -97,7 +102,14 @@ public class PlayerStateMachine : MonoBehaviour
             gunCooldownTimer -= Time.deltaTime;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        // Power-up dash activation
+        if (powerUpActive && Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            SwitchState(new MovementSlashState(this));
+            return; // Important: stop further Update() in this frame
+        }
+
+        if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f)
         {
             SwitchState(new GunAttackState(
                 this,
@@ -119,6 +131,16 @@ public class PlayerStateMachine : MonoBehaviour
 
         currentState?.Update();
     }
+
+    void FixedUpdate()
+    {
+        // Let the state apply physics ONLY here
+        if (currentState is IPlayerPhysicsState physState)
+        {
+            physState.FixedUpdate();
+        }
+    }
+
 
     /*private void HandleInput()
     {
@@ -168,6 +190,17 @@ public class PlayerStateMachine : MonoBehaviour
     {
         return coyoteTimer > 0f;
     }
+    public void FlipToGunDirection()
+    {
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        if (mouseWorld.x > transform.position.x)
+            transform.localScale = new Vector3(1, 1, 1);
+        else
+            transform.localScale = new Vector3(-1, 1, 1);
+    }
+
+
 
     //Accessors used by state objects (encapulates internal details)
     public Transform GetTransform() => transform;

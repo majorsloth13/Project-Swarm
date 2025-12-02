@@ -10,6 +10,8 @@ public class GunAttackState : IPlayerState
     private Transform gunTransform;
     private float bulletLifetime;
 
+    private bool fired = false;
+
     public GunAttackState(
         PlayerStateMachine ctx,
         float cooldown,
@@ -28,41 +30,41 @@ public class GunAttackState : IPlayerState
 
     public void Enter()
     {
-        FireBullet();
-        ctx.gunCooldownTimer = cooldown;
+        fired = false;
     }
 
     public void Update()
     {
-        /*Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mouseWorld - gunTransform.position).normalized;
+        ctx.FlipToGunDirection();
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);*/
-    
+        // fire ONCE per Enter(), NEVER in Update()
+        if (!fired)
+        {
+            FireBullet();
+            ctx.gunCooldownTimer = cooldown;
+            fired = true;
 
-        if (ctx.previousState != null)
-        {
-            ctx.SwitchState(ctx.previousState);
-        }
-        else
-        {
-            Debug.LogWarning("GunAttackState: previousState is null, cannot switch back!");
+            // switch states ONLY AFTER firing
+            if (ctx.previousState != null)
+            {
+                ctx.SwitchState(ctx.previousState);
+                return; // important!
+            }
         }
     }
 
-
-    public void Exit()
-    {
-       
-    }
+    public void Exit() { }
 
     private void FireBullet()
     {
         GameObject b = Object.Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
 
         Rigidbody2D rb = b.GetComponent<Rigidbody2D>();
-        rb.linearVelocity = firePoint.right * 20f; // adjustable later 
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = firePoint.right * 20f;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
 
         Object.Destroy(b, bulletLifetime);
     }
