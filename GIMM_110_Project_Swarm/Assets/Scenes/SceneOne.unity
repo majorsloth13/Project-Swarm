@@ -908,7 +908,8 @@ MonoBehaviour:
     EnemyRespawnState to where enemies randomly spawn and patrol platforms\n\nEnemy
     Healthbars that appear when they are hit\n\nplayer healthbar\n\nFix  enemy stutter
     when leaving platform \n\nAdd I-frames after respawning\n\nImplement Health Sysytem
-    properly for player and add a state for Taking Damage"
+    properly for player and add a state for Taking Damage\n\nChange to where when
+    the enemy spots player, they constantly chase until they are killed "
 --- !u!4 &722113908
 Transform:
   m_ObjectHideFlags: 0
