@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class JumpState : IPlayerState
+public class JumpState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
-
     private float jumpForce;
 
     public JumpState(PlayerStateMachine machine)
@@ -16,40 +15,47 @@ public class JumpState : IPlayerState
 
     public void Enter()
     {
-        // Reset vertical velocity then apply jump impulse
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-
-        // On initial jump we still have double-jump available (set by GroundedState previously)
-        // If you prefer consuming double-jump on first jump, set machine.HasDoubleJump = false here.
     }
 
     public void Update()
     {
-        // Horizontal control in air
         float xInput = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
 
-        // If jump pressed again and double jump available -> DoubleJump
+        // Trigger double jump
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
             machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
 
-        // If we start falling -> go to fall state
+        // Trigger ground pound
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            machine.SwitchState(new GroundPoundState(machine));
+            return;
+        }
+
+        // Switch to fall
         if (rb.linearVelocity.y <= 0f)
         {
             machine.SwitchState(new FallState(machine));
             return;
         }
 
-        // If touching a wall and falling or moving down -> wall slide
+        // Wall slide
         if (machine.IsTouchingWall && rb.linearVelocity.y <= 0f)
         {
-            machine.SwitchState(new WallSlideState(machine));
+            machine.SwitchState(new WallSlideState(machine)); // assumes you have WallSlideState
             return;
         }
+    }
+
+    public void FixedUpdate()
+    {
+        float xInput = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
     public void Exit() { }

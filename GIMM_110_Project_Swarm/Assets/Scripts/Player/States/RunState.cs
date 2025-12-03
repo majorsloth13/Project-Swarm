@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RunState : IPlayerState
+public class RunState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
@@ -24,21 +24,24 @@ public class RunState : IPlayerState
         }
 
         float input = Input.GetAxisRaw("Horizontal");
+        machine.FlipToGunDirection();
         if (Mathf.Abs(input) < 0.01f)
         {
             machine.SwitchState(new IdleState(machine));
             return;
         }
 
-        // Move
-        rb.linearVelocity = new Vector2(input * speed, rb.linearVelocity.y);
-
-        // Jump
         if (Input.GetKeyDown(KeyCode.Space) || machine.TryConsumeJumpBuffer())
         {
             machine.SwitchState(new JumpState(machine));
             return;
         }
+    }
+
+    public void FixedUpdate()
+    {
+        float input = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(input * speed, rb.linearVelocity.y);
     }
 
     public void Exit() { }
