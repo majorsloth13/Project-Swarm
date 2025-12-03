@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GroundedState : IPlayerState
+public class GroundedState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
@@ -13,12 +13,9 @@ public class GroundedState : IPlayerState
 
     public void Enter()
     {
-        // Reset double-jump when we land
         machine.HasDoubleJump = true;
-        // reset coyote (handled in machine.Update too, but this is explicit on Enter)
         machine.coyoteTimer = machine.coyoteTime;
 
-        // If the player buffered a jump while falling right before landing, perform jump
         if (machine.TryConsumeJumpBuffer())
         {
             machine.SwitchState(new JumpState(machine));
@@ -28,23 +25,20 @@ public class GroundedState : IPlayerState
 
     public void Update()
     {
-        // If we are no longer grounded, go to Fall
         if (!machine.IsGrounded)
         {
             machine.SwitchState(new FallState(machine));
             return;
         }
 
-        // Jump input (considers coyote time/time on ground)
         if (Input.GetKeyDown(KeyCode.Space) || machine.TryConsumeJumpBuffer())
         {
-            // If grounded, jump immediately
             machine.SwitchState(new JumpState(machine));
             return;
         }
 
-        // Movement: choose Idle vs Run
         float input = Input.GetAxisRaw("Horizontal");
+        machine.FlipToGunDirection();
         if (Mathf.Abs(input) > 0.01f)
         {
             machine.SwitchState(new RunState(machine));
@@ -53,6 +47,13 @@ public class GroundedState : IPlayerState
         {
             machine.SwitchState(new IdleState(machine));
         }
+    }
+
+    public void FixedUpdate()
+    {
+        // Optional: apply horizontal movement if you want "grounded control"
+        float input = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(input * machine.horizontalSpeed, rb.linearVelocity.y);
     }
 
     public void Exit() { }

@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class FallState : IPlayerState
+public class FallState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     public FallState(PlayerStateMachine machine)
     {
@@ -15,30 +15,33 @@ public class FallState : IPlayerState
 
     public void Update()
     {
-        // Horizontal mid-air control
-        float input = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(input * machine.airMoveSpeed, rb.linearVelocity.y);
+        machine.FlipToGunDirection();
 
-        // Landing detection -> switch to GroundedState
         if (machine.IsGrounded)
         {
             machine.SwitchState(new GroundedState(machine));
             return;
         }
 
-        // Wall slide
         if (machine.IsTouchingWall && rb.linearVelocity.y <= 0f)
         {
             machine.SwitchState(new WallSlideState(machine));
             return;
         }
 
-        // If player presses Space and has double jump available -> double jump
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
+            machine.HasDoubleJump = false;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, machine.jumpForce);
             machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
+    }
+
+    public void FixedUpdate()
+    {
+        float xInput = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
     public void Exit() { }

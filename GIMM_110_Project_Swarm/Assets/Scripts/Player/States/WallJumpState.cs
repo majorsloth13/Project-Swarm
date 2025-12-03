@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public class WallJumpState : IPlayerState
+public class WallJumpState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
 
-    private float jumpVerticalForce = 10f;
-    private float jumpHorizontalForce = 6f;
-    private float duration = 0.18f;
+    private float jumpVerticalForce;
+    private float jumpHorizontalForce;
+    private float duration;
     private float timer;
     private Vector2 initialVelocity;
 
@@ -24,9 +24,9 @@ public class WallJumpState : IPlayerState
     {
         timer = 0f;
 
-        // Choose direction away from the wall
+        machine.HasDoubleJump = true;
+
         float dir = machine.IsTouchingLeftWall ? 1f : -1f;
-        // Set immediate velocity away and up
         initialVelocity = new Vector2(dir * jumpHorizontalForce, jumpVerticalForce);
         rb.linearVelocity = initialVelocity;
     }
@@ -34,16 +34,20 @@ public class WallJumpState : IPlayerState
     public void Update()
     {
         timer += Time.deltaTime;
-        // Give player control during the short wall-jump window
-        float input = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(input * machine.airMoveSpeed, rb.linearVelocity.y);
+
+        machine.FlipToGunDirection();
 
         if (timer >= duration)
         {
-            // After wall jump we go into fall (or jump depending on velocity)
             machine.SwitchState(new FallState(machine));
             return;
         }
+    }
+
+    public void FixedUpdate()
+    {
+        float xInput = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
     public void Exit() { }
