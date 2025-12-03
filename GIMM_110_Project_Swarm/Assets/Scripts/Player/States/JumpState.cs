@@ -23,21 +23,31 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
     {
         float xInput = Input.GetAxisRaw("Horizontal");
 
+        // Trigger double jump
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
             machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
 
+        // Trigger ground pound
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            machine.SwitchState(new GroundPoundState(machine));
+            return;
+        }
+
+        // Switch to fall
         if (rb.linearVelocity.y <= 0f)
         {
             machine.SwitchState(new FallState(machine));
             return;
         }
 
+        // Wall slide
         if (machine.IsTouchingWall && rb.linearVelocity.y <= 0f)
         {
-            machine.SwitchState(new WallSlideState(machine));
+            machine.SwitchState(new WallSlideState(machine)); // assumes you have WallSlideState
             return;
         }
     }

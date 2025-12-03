@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour
     private Rigidbody2D rb;
     public float bulletSpeed;
     public int bulletDamage;
-    
+    public LayerMask LayerMask;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -34,8 +34,16 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        collision.gameObject.GetComponent<Enemy>().damaged(bulletDamage);
-        
+        // Replace CompareLayer with layer mask check
+        if ((LayerMask.value & (1 << collision.gameObject.layer)) == 0)
+            return;
+
+        EnemyHealth hp = collision.GetComponent<EnemyHealth>();
+        if (hp != null)
+            hp.TakeDamage(bulletDamage);
+
         Destroy(gameObject);
+        
     }
+
 }

@@ -23,9 +23,6 @@ public class WallJumpState : IPlayerState, IPlayerPhysicsState
     public void Enter()
     {
         timer = 0f;
-
-        machine.HasDoubleJump = true;
-
         float dir = machine.IsTouchingLeftWall ? 1f : -1f;
         initialVelocity = new Vector2(dir * jumpHorizontalForce, jumpVerticalForce);
         rb.linearVelocity = initialVelocity;

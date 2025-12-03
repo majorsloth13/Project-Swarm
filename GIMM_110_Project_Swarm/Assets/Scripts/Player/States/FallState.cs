@@ -3,7 +3,7 @@ using UnityEngine;
 public class FallState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
-    public Rigidbody2D rb;
+    private Rigidbody2D rb;
 
     public FallState(PlayerStateMachine machine)
     {
@@ -15,8 +15,6 @@ public class FallState : IPlayerState, IPlayerPhysicsState
 
     public void Update()
     {
-        machine.FlipToGunDirection();
-
         if (machine.IsGrounded)
         {
             machine.SwitchState(new GroundedState(machine));
@@ -31,9 +29,14 @@ public class FallState : IPlayerState, IPlayerPhysicsState
 
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
-            machine.HasDoubleJump = false;
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, machine.jumpForce);
             machine.SwitchState(new DoubleJumpState(machine));
+            return;
+        }
+
+        // Ground pound trigger
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            machine.SwitchState(new GroundPoundState(machine));
             return;
         }
     }
