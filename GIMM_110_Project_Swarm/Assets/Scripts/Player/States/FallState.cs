@@ -15,6 +15,8 @@ public class FallState : IPlayerState, IPlayerPhysicsState
 
     public void Update()
     {
+        machine.FlipToGunDirection();
+
         if (machine.IsGrounded)
         {
             machine.SwitchState(new GroundedState(machine));
@@ -29,6 +31,8 @@ public class FallState : IPlayerState, IPlayerPhysicsState
 
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
+            machine.HasDoubleJump = false;
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, machine.jumpForce);
             machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
@@ -37,7 +41,6 @@ public class FallState : IPlayerState, IPlayerPhysicsState
     public void FixedUpdate()
     {
         float xInput = Input.GetAxisRaw("Horizontal");
-        machine.FlipToGunDirection();
         rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 

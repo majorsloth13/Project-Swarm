@@ -599,7 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc3b6edf93c830b4183775eb370d772d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  respawnManager: {fileID: 0}
+  respawnManager: {fileID: 462833005}
   startingHealth: 6
 --- !u!1 &519420028
 GameObject:
@@ -906,7 +906,7 @@ MonoBehaviour:
     up wall when wallsliding\n\nPrevent enemy from falling through ground when dying\n\nchange
     color of KillCounter\n\nAdd Player Dash, Death,  and Respawn State\n \nImplement
     EnemyRespawnState to where enemies randomly spawn and patrol platforms\n\nEnemy
-    Healthbars that appear when they are hit\n\nplayer healthbar\n\nFix  enemy stutter
+    Healthbars that appear when they are hit\n\nplayer healthbar\n\nFix enemy stutter
     when leaving platform \n\nAdd I-frames after respawning\n\nImplement Health Sysytem
     properly for player and add a state for Taking Damage\n\nChange to where when
     the enemy spots player, they constantly chase until they are killed "
@@ -1185,8 +1185,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190266
+  m_fontColor: {r: 0.7283019, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1900,7 +1900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2165afc940c80064d8c915945394566e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 5
 --- !u!114 &1785998588
 MonoBehaviour:
   m_ObjectHideFlags: 0
