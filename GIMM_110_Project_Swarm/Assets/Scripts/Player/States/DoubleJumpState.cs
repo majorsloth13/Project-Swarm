@@ -22,12 +22,21 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
 
     public void Update()
     {
+        // Trigger ground pound
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            machine.SwitchState(new GroundPoundState(machine));
+            return;
+        }
+
+        // Switch to fall
         if (rb.linearVelocity.y <= 0f)
         {
             machine.SwitchState(new FallState(machine));
             return;
         }
 
+        // Wall slide
         if (machine.IsTouchingWall && rb.linearVelocity.y <= 0f)
         {
             machine.SwitchState(new WallSlideState(machine));
@@ -38,7 +47,6 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
     public void FixedUpdate()
     {
         float xInput = Input.GetAxisRaw("Horizontal");
-        machine.FlipToGunDirection();
         rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 

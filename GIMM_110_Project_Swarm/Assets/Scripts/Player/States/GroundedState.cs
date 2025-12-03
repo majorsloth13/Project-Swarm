@@ -41,17 +41,16 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
         machine.FlipToGunDirection();
         if (Mathf.Abs(input) > 0.01f)
         {
-            machine.SwitchState(new RunState(machine));
+            machine.SwitchState(new RunState(machine)); // assumes you have a RunState
         }
         else
         {
-            machine.SwitchState(new IdleState(machine));
+            machine.SwitchState(new IdleState(machine)); // assumes you have an IdleState
         }
     }
 
     public void FixedUpdate()
     {
-        // Optional: apply horizontal movement if you want "grounded control"
         float input = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(input * machine.horizontalSpeed, rb.linearVelocity.y);
     }
