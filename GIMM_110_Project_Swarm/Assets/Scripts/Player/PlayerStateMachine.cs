@@ -7,6 +7,7 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Movement Speeds (units/second)")]
     public float verticalSpeed = 10f;
     public float horizontalSpeed = 10f;
+
     [Header("Jump")]
     public float jumpForce = 12f;
     public float airMoveSpeed = 8f;
@@ -28,12 +29,28 @@ public class PlayerStateMachine : MonoBehaviour
     [Tooltip("How long a jump press is buffered before landing.")]
     public float jumpBufferTime = 0.12f;
 
+    [Header("Gun Attack")]
+    public GameObject bulletPrefab;
+    public Transform gunFirePoint;
+    public Transform gunTransform;
+    //public float gunFireRate = 0.25f;
+    public float bulletLifetime = 2f;
+
+    [Header("Power-Up")]
+    public bool powerUpActive = false; // set true when player picks up power
+
+
+    // adjustable cooldown
+    public float gunCooldown = 0.25f;     
+   [HideInInspector] public float gunCooldownTimer = 0f;
+
     // runtime timers
     internal float coyoteTimer = 0f;
     internal float jumpBufferTimer = 0f;
 
     // states
     private IPlayerState currentState;
+    public IPlayerState previousState;
 
     // public flags
     public bool HasDoubleJump = true;   // rset when landing
@@ -79,8 +96,51 @@ public class PlayerStateMachine : MonoBehaviour
             jumpBufferTimer = jumpBufferTime;
         }
 
+        // cooldown countdown
+        if (gunCooldownTimer > 0f)
+        {
+            gunCooldownTimer -= Time.deltaTime;
+        }
+
+        // Power-up dash activation
+        if (powerUpActive && Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            SwitchState(new MovementSlashState(this));
+            return; // Important: stop further Update() in this frame
+        }
+
+        if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f)
+        {
+            SwitchState(new GunAttackState(
+                this,
+                //gunFireRate,
+                gunCooldown,
+                bulletPrefab,
+                gunFirePoint,
+                gunTransform,
+                bulletLifetime
+            ));
+            return;
+        }
+
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mouseWorld - gunTransform.position).normalized;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+
         currentState?.Update();
     }
+
+    void FixedUpdate()
+    {
+        // Let the state apply physics ONLY here
+        if (currentState is IPlayerPhysicsState physState)
+        {
+            physState.FixedUpdate();
+        }
+    }
+
 
     /*private void HandleInput()
     {
@@ -101,17 +161,18 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void SwitchState(IPlayerState newState)
     {
-        currentState?.Exit();
-        currentState = newState;
-        currentState.Enter();
-        /*if (currentState != null)
+        if (newState == null)
         {
-            currentState.Exit();
+            Debug.LogWarning("SwitchState called with null!");
+            return;
         }
 
+        currentState?.Exit();
+        previousState = currentState; // << assign previous
         currentState = newState;
-        currentState.Enter();*/
+        currentState.Enter();
     }
+
 
     // Called by states to check & consume buffered jump
     public bool TryConsumeJumpBuffer()
@@ -129,6 +190,17 @@ public class PlayerStateMachine : MonoBehaviour
     {
         return coyoteTimer > 0f;
     }
+    public void FlipToGunDirection()
+    {
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        if (mouseWorld.x > transform.position.x)
+            transform.localScale = new Vector3(1, 1, 1);
+        else
+            transform.localScale = new Vector3(-1, 1, 1);
+    }
+
+
 
     //Accessors used by state objects (encapulates internal details)
     public Transform GetTransform() => transform;

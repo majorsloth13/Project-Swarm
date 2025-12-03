@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class IdleState : IPlayerState
+public class IdleState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
@@ -13,13 +13,11 @@ public class IdleState : IPlayerState
 
     public void Enter()
     {
-        // Stop horizontal velocity on enter (optional)
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
 
     public void Update()
     {
-        // If no longer grounded, go to Fall
         if (!machine.IsGrounded)
         {
             machine.SwitchState(new FallState(machine));
@@ -27,6 +25,7 @@ public class IdleState : IPlayerState
         }
 
         float input = Input.GetAxisRaw("Horizontal");
+        machine.FlipToGunDirection();
         if (Mathf.Abs(input) > 0.01f)
         {
             machine.SwitchState(new RunState(machine));
@@ -38,6 +37,11 @@ public class IdleState : IPlayerState
             machine.SwitchState(new JumpState(machine));
             return;
         }
+    }
+
+    public void FixedUpdate()
+    {
+        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
 
     public void Exit() { }
