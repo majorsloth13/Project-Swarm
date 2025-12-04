@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {
@@ -65,4 +65,4 @@ public class GunScript : MonoBehaviour
 
 
     }
-}
+}*/

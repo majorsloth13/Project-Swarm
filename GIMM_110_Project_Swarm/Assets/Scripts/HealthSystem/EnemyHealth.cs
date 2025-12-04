@@ -1,34 +1,84 @@
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+public class EnemyHealth : HealthBase
 {
-    [SerializeField] private float maxHealth = 50f;
-    public float currentHealth { get; private set; }
-    private bool dead;
+    private EnemyHealthBar bar;
+    private SpriteRenderer sr;
+    private Color originalColor;
+    private Color flashColor = new Color32(0xAC, 0x00, 0x00, 0xFF);
+    private bool flashing = false;
 
-    private EnemyStateMachine stateMachine;
-    private Animator anim;
+    public System.Action OnEnemyDied;
 
-    private void Awake()
+    protected override void Awake()
     {
-        currentHealth = maxHealth;
-        stateMachine = GetComponent<EnemyStateMachine>();
-        anim = GetComponent<Animator>();
+        base.Awake();
+
+        // Find health bar even if canvas is inactive
+        bar = GetComponentInChildren<EnemyHealthBar>(true);
+        Debug.Log("EnemyHealth Awake() — healthBar reference = " + bar);
+
+        sr = GetComponentInChildren<SpriteRenderer>();
+        originalColor = sr.color;
+
+        if (bar != null)
+        {
+            bar.Initialize(this);
+            bar.gameObject.SetActive(false); // keep it hidden until damaged
+        }
+        else
+        {
+            Debug.LogError("EnemyHealthBar component missing on prefab!");
+        }
     }
 
-    public void TakeDamage(float damage)
+    public override void TakeDamage(float dmg)
     {
-        if (dead) return;
+        Debug.Log("EnemyHealth.TakeDamage() CALLED on " + gameObject.name);
 
-        currentHealth -= damage;
+        base.TakeDamage(dmg);
 
-        if (anim != null)
-            anim.SetTrigger("hurt");
-
-        if (currentHealth <= 0)
+        if (bar != null)
         {
-            dead = true;
-            stateMachine.SwitchState(new EnemyDeathState(stateMachine));
+            // Show the bar if it’s not already active
+            if (!bar.gameObject.activeSelf)
+            {
+                bar.gameObject.SetActive(true);
+                Debug.Log("EnemyHealthBar SHOWING for " + gameObject.name);
+            }
+
+            bar.UpdateHealth(currentHealth);
         }
+
+        Flash();
+    }
+
+    protected override void Die()
+    {
+        if (KillCounter.Instance != null)
+            KillCounter.Instance.AddKill();
+
+        if (bar != null)
+        {
+            bar.gameObject.SetActive(false); // hide bar on death if you want
+            Debug.Log("EnemyHealthBar HIDDEN because enemy died");
+        }
+
+        Destroy(gameObject);
+    }
+
+    private void Flash()
+    {
+        if (!flashing)
+            StartCoroutine(FlashRoutine());
+    }
+
+    private System.Collections.IEnumerator FlashRoutine()
+    {
+        flashing = true;
+        sr.color = flashColor;
+        yield return new WaitForSeconds(0.08f);
+        sr.color = originalColor;
+        flashing = false;
     }
 }
