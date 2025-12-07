@@ -62,13 +62,17 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
         //rb.linearVelocity = new Vector2(xInput * dashSpeed, 0f);
 
 
-            
-            
-        
-        
+        if (!isDashing)
+        {
+            machine.SwitchState(new IdleState(machine));
+            return;
+        }
 
-            // End dash
-          
+
+
+
+        // End dash
+
     }
 
     public void FixedUpdate() { }
@@ -77,6 +81,7 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
     {
          // restore gravity
         Debug.Log($"Exit {rb.gravityScale}");
+       
     }
 
     IEnumerator Dash()
@@ -117,5 +122,7 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
 
 
         isDashing = false;
+        
+        Debug.Log("enetered idel fromdash");
     }
 }

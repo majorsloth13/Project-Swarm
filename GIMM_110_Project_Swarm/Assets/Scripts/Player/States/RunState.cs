@@ -33,9 +33,6 @@ public class RunState : IPlayerState, IPlayerPhysicsState
             return;
         }
 
-
-
-
         if (Input.GetKeyDown(KeyCode.Space) || machine.TryConsumeJumpBuffer())
         {
             Debug.Log("got jump from run");

@@ -601,6 +601,9 @@ MonoBehaviour:
   hasActivated: 0
   gunCooldown: 0.25
   gunCooldownTimer: 0
+  maxDashCharges: 2
+  currentDashCharges: 2
+  dashRechargeTime: 3
   HasDoubleJump: 1
 --- !u!50 &511052239
 Rigidbody2D:

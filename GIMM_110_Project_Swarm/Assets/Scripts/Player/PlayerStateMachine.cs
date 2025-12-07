@@ -143,10 +143,7 @@ public class PlayerStateMachine : MonoBehaviour
                     currentDashCharges++;
                     dashRechargeTimer = 0f;
                 }
-                if(currentDashCharges <= 0)
-                {
-                    Debug.Log("dash is zero");
-                }
+                
             }
             if (Input.GetMouseButtonDown(1) && currentDashCharges > 0)
             {
@@ -158,6 +155,7 @@ public class PlayerStateMachine : MonoBehaviour
             }
          
         }
+        
 
 
 
