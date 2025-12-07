@@ -99,9 +99,7 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
 #ignore vuforia package
-#Packages/com.ptc.vuforia.engine-11.4.4.tgz
-#Assets/Editor/Migration/com.ptc.vuforia.engine-11.4.4.tgz
-#Assets/Editor/Migration/com.ptc.vuforia.engine-11.4.4.tgz.meta
-GIMM_110_Project_Swarm/Packages/com.ptc.vuforia.engine.tgz
-GIMM_110_Project_Swarm/Assets/Editor/Migration/com.ptc.vuforia.engine.tgz
-GIMM_110_Project_Swarm/Assets/Editor/Migration/com.ptc.vuforia.engine.tgz.meta
+Packages/com.ptc.vuforia.engine-11.4.4.tgz
+Assets/Editor/Migration/com.ptc.vuforia.engine-11.4.4.tgz
+Assets/Editor/Migration/com.ptc.vuforia.engine-11.4.4.tgz.meta
+
