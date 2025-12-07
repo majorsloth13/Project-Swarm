@@ -35,14 +35,20 @@ public class PlayerStateMachine : MonoBehaviour
     public Transform gunTransform;
     //public float gunFireRate = 0.25f;
     public float bulletLifetime = 2f;
+    public GameObject gun;
 
     [Header("Power-Up")]
-    public bool powerUpActive = false; // set true when player picks up power
-
-
+    public bool powerUpActive = true; // set true when player picks up power
+    public float powerUpTimer = 3f;
+    public bool hasActivated = false;
     // adjustable cooldown
     public float gunCooldown = 0.25f;     
    [HideInInspector] public float gunCooldownTimer = 0f;
+    public int maxDashCharges = 2;
+    public int currentDashCharges = 2;
+    public float dashRechargeTime = 3f;
+    private float dashRechargeTimer = 0f;
+    
 
     // runtime timers
     internal float coyoteTimer = 0f;
@@ -71,75 +77,129 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (Rb == null) Rb = GetComponent<Rigidbody2D>();
         SwitchState(new GroundedState(this)); // start inside grounded parent
+
+
+
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!IsGrounded)
+        // Update is called once per frame
+        void Update()
         {
-            coyoteTimer -= Time.deltaTime;
+            if (!IsGrounded)
+            {
+            
+                coyoteTimer -= Time.deltaTime;
+            }
+            else
+            {
+                coyoteTimer = coyoteTime; // rest whenever grounded
+            }
+
+            if (jumpBufferTimer > 0f)
+            {
+                jumpBufferTimer -= Time.deltaTime;
+            }
+
+            // capture jump input (buffer)
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                jumpBufferTimer = jumpBufferTime;
+            }
+
+            // cooldown countdown
+            if (gunCooldownTimer > 0f)
+            {
+                gunCooldownTimer -= Time.deltaTime;
+            }
+            if (Input.GetKeyDown(KeyCode.LeftShift) && powerUpTimer == 3)
+            {
+                hasActivated = true;
+                gun.gameObject.SetActive(false);
+
+            }
+            else if (powerUpTimer <= 0f)
+            {
+                hasActivated = false;
+                gun.gameObject.SetActive(true);
+            
         }
-        else
+            // Power-up dash activation
+            if (!hasActivated && powerUpTimer <= 0)
+            {
+
+                powerUpTimer = 3f;
+
+
+            }
+        if (hasActivated)
         {
-            coyoteTimer = coyoteTime; // rest whenever grounded
+            powerUpTimer -= Time.deltaTime;
+            if (currentDashCharges < maxDashCharges)
+            {
+                dashRechargeTimer += Time.deltaTime;
+
+                if (dashRechargeTimer >= dashRechargeTime)
+                {
+                    currentDashCharges++;
+                    dashRechargeTimer = 0f;
+                }
+                if(currentDashCharges <= 0)
+                {
+                    Debug.Log("dash is zero");
+                }
+            }
+            if (Input.GetMouseButtonDown(1) && currentDashCharges > 0)
+            {
+                Debug.Log("slashed");
+                currentDashCharges--;
+                SwitchState(new MovementSlashState(this));
+                
+                return;
+            }
+         
         }
 
-        if (jumpBufferTimer > 0f)
-        {
-            jumpBufferTimer -= Time.deltaTime;
-        }
 
-        // capture jump input (buffer)
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            jumpBufferTimer = jumpBufferTime;
-        }
 
-        // cooldown countdown
-        if (gunCooldownTimer > 0f)
-        {
-            gunCooldownTimer -= Time.deltaTime;
-        }
+        //if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f)
+        //{
+        //    SwitchState(new GunAttackState(
+        //        this,
+        //        //gunFireRate,
+        //        gunCooldown,
+        //        bulletPrefab,
+        //        gunFirePoint,
+        //        gunTransform,
+        //        bulletLifetime
+        //    ));
+        //    return;
+        //}
 
-        // Power-up dash activation
-        if (powerUpActive && Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f && !hasActivated)
         {
-            SwitchState(new MovementSlashState(this));
-            return; // Important: stop further Update() in this frame
-        }
-
-        if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f)
-        {
-            SwitchState(new GunAttackState(
-                this,
-                //gunFireRate,
-                gunCooldown,
-                bulletPrefab,
-                gunFirePoint,
-                gunTransform,
-                bulletLifetime
-            ));
+            Debug.Log("fired");
+            FireBullet(); // no state switch
             return;
         }
 
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mouseWorld - gunTransform.position).normalized;
+            Vector2 direction = (mouseWorld - gunTransform.position).normalized;
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        currentState?.Update();
-    }
-
-    void FixedUpdate()
-    {
-        // Let the state apply physics ONLY here
-        if (currentState is IPlayerPhysicsState physState)
-        {
-            physState.FixedUpdate();
+            currentState?.Update();
         }
-    }
+
+        void FixedUpdate()
+        {
+            // Let the state apply physics ONLY here
+            if (currentState is IPlayerPhysicsState physState)
+            {
+                physState.FixedUpdate();
+            }
+        }
+    
 
 
     /*private void HandleInput()
@@ -193,11 +253,11 @@ public class PlayerStateMachine : MonoBehaviour
     public void FlipToGunDirection()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
+            
         if (mouseWorld.x > transform.position.x)
-            transform.localScale = new Vector3(1, 1, 1);
+            transform.localScale = new Vector3(2, 2, 1);
         else
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-2, 2, 1);
     }
 
 
@@ -208,5 +268,19 @@ public class PlayerStateMachine : MonoBehaviour
     public float GetHorizontalSpeed() => horizontalSpeed;
     //public Rigidbody2D GetRb() => GetComponent<Rigidbody2D>();
     public Rigidbody2D GetRb() => Rb;
-    
+
+    private void FireBullet()
+    {
+        GameObject b = Object.Instantiate(bulletPrefab, gunFirePoint.position, gunFirePoint.rotation);
+
+        Rigidbody2D rb = b.GetComponent<Rigidbody2D>();
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = gunFirePoint.right * 20f;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+
+        Object.Destroy(b, bulletLifetime);
+    }
+
 }

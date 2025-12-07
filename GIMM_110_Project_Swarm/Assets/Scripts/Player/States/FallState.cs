@@ -29,9 +29,17 @@ public class FallState : IPlayerState, IPlayerPhysicsState
 
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
+            Debug.Log("double jump!");
             machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
+
+        //if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
+        //{
+        //    Debug.Log("double jump from fall state");
+        //    machine.SwitchState(new DoubleJumpState(machine));
+        //    return;
+        //}
     }
 
     public void FixedUpdate()

@@ -33,6 +33,7 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
 
         if (Input.GetKeyDown(KeyCode.Space) || machine.TryConsumeJumpBuffer())
         {
+            Debug.Log("got jump from grounded");
             machine.SwitchState(new JumpState(machine));
             return;
         }

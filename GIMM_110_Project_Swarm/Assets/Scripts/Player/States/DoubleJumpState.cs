@@ -15,6 +15,7 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
 
     public void Enter()
     {
+        Debug.Log("doubleJump");
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         machine.HasDoubleJump = false;
@@ -22,6 +23,7 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
 
     public void Update()
     {
+        
         if (rb.linearVelocity.y <= 0f)
         {
             machine.SwitchState(new FallState(machine));

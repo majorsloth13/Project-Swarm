@@ -14,13 +14,14 @@ public class DeathBox : MonoBehaviour
         // Check if the colliding object is the player
         if (other.CompareTag("Player"))
         {
-            Debug.Log("you are dead");
+            
             // Try to get the Health component from the player
             Health playerHealth = other.GetComponent<Health>();
             if (playerHealth != null)
             {
                 // Deal fatal damage
                 playerHealth.TakeDamage(damageAmount);
+                
                 
             }
         }

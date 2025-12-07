@@ -13,13 +13,16 @@ public class IdleState : IPlayerState, IPlayerPhysicsState
 
     public void Enter()
     {
+        Debug.Log("enetered idle");
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
     }
 
     public void Update()
     {
+        
         if (!machine.IsGrounded)
         {
+
             machine.SwitchState(new FallState(machine));
             return;
         }
@@ -34,7 +37,14 @@ public class IdleState : IPlayerState, IPlayerPhysicsState
 
         if (Input.GetKeyDown(KeyCode.Space) || machine.TryConsumeJumpBuffer())
         {
+            Debug.Log("got jump from idel");
             machine.SwitchState(new JumpState(machine));
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
+        {
+            Debug.Log("double jump!");
+            machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
     }

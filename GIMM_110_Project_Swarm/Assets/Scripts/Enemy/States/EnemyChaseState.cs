@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyChaseState : IEnemyState
 {
@@ -11,9 +11,27 @@ public class EnemyChaseState : IEnemyState
 
     public void Enter() { }
 
+    public bool HasLineOfSight(Transform enemy, Transform player, LayerMask obstacleMask)
+    {
+        Vector2 dir = player.position - enemy.position;
+        float dist = dir.magnitude;
+
+        RaycastHit2D hit = Physics2D.Raycast(enemy.position, dir.normalized, dist, obstacleMask);
+
+        // If hit something BEFORE the player → blocked
+        if (hit.collider != null && !hit.collider.CompareTag("Player"))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
     public void Update()
     {
-        if (!ctx.sensor.playerDetected)
+
+        if (!HasLineOfSight(ctx.transform, ctx.Player, ctx.obstacleMask))
         {
             ctx.SwitchState(new EnemyPatrolState(ctx));
             return;

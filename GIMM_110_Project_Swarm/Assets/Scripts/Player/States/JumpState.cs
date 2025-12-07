@@ -4,7 +4,7 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
-    private float jumpForce;
+    private float jumpForce = 5;
 
     public JumpState(PlayerStateMachine machine)
     {
@@ -15,16 +15,21 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
 
     public void Enter()
     {
+        Debug.Log("jumped");
+        // Reset vertical velocity
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+        // Directly set the upward velocity to make the player jump
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, machine.jumpForce); // use jumpHeight instead of jumpForce
     }
 
     public void Update()
     {
-        float xInput = Input.GetAxisRaw("Horizontal");
-
+        
+        // --- Always check double jump first ---
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
+            Debug.Log("double jump!");
             machine.SwitchState(new DoubleJumpState(machine));
             return;
         }
@@ -42,11 +47,12 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
         }
     }
 
+
     public void FixedUpdate()
     {
         float xInput = Input.GetAxisRaw("Horizontal");
         rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
-    public void Exit() { }
+    public void Exit() { Debug.Log("JumpState ended"); }
 }

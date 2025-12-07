@@ -1,71 +1,78 @@
-using UnityEngine;
+//using UnityEngine;
 
-public class GunAttackState : IPlayerState
-{
-    private PlayerStateMachine ctx;
+//public class GunAttackState : IPlayerState
 
-    private float cooldown;
-    private GameObject bulletPrefab;
-    private Transform firePoint;
-    private Transform gunTransform;
-    private float bulletLifetime;
+//{
+//    private PlayerStateMachine ctx;
 
-    private bool fired = false;
+//    private float cooldown;
+//    private GameObject bulletPrefab;
+//    private Transform firePoint;
+//    private Transform gunTransform;
+//    private float bulletLifetime;
 
-    public GunAttackState(
-        PlayerStateMachine ctx,
-        float cooldown,
-        GameObject bulletPrefab,
-        Transform firePoint,
-        Transform gunTransform,
-        float bulletLifetime)
-    {
-        this.ctx = ctx;
-        this.cooldown = cooldown;
-        this.bulletPrefab = bulletPrefab;
-        this.firePoint = firePoint;
-        this.gunTransform = gunTransform;
-        this.bulletLifetime = bulletLifetime;
-    }
+//    private bool fired = false;
 
-    public void Enter()
-    {
-        fired = false;
-    }
+//    public GunAttackState(
+//        PlayerStateMachine ctx,
+//        float cooldown,
+//        GameObject bulletPrefab,
+//        Transform firePoint,
+//        Transform gunTransform,
+//        float bulletLifetime)
+//    {
+//        this.ctx = ctx;
+//        this.cooldown = cooldown;
+//        this.bulletPrefab = bulletPrefab;
+//        this.firePoint = firePoint;
+//        this.gunTransform = gunTransform;
+//        this.bulletLifetime = bulletLifetime;
+//    }
 
-    public void Update()
-    {
-        ctx.FlipToGunDirection();
+//    public void Enter()
+//    {
+//        fired = false;
+//    }
 
-        // fire ONCE per Enter(), NEVER in Update()
-        if (!fired)
-        {
-            FireBullet();
-            ctx.gunCooldownTimer = cooldown;
-            fired = true;
+//    public void Update()
+//    {
+//        ctx.FlipToGunDirection();
 
-            // switch states ONLY AFTER firing
-            if (ctx.previousState != null)
-            {
-                ctx.SwitchState(ctx.previousState);
-                return; // important!
-            }
-        }
-    }
+//        // fire ONCE per Enter(), NEVER in Update()
+//        if (!fired)
+//        {
+//            FireBullet();
+//            ctx.gunCooldownTimer = cooldown;
+//            fired = true;
+          
 
-    public void Exit() { }
+//            // switch states ONLY AFTER firing
 
-    private void FireBullet()
-    {
-        GameObject b = Object.Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+//            if (ctx.previousState != null)
+//            {
+//                ctx.SwitchState(ctx.previousState);
+//                return; // important!
+//            }
+//        }
+//    }
 
-        Rigidbody2D rb = b.GetComponent<Rigidbody2D>();
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        rb.gravityScale = 0f;
-        rb.linearVelocity = firePoint.right * 20f;
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+   
 
 
-        Object.Destroy(b, bulletLifetime);
-    }
-}
+//    public void Exit() { }
+
+//    private void FireBullet()
+//    {
+//        GameObject b = Object.Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+//        Rigidbody2D rb = b.GetComponent<Rigidbody2D>();
+//        rb.bodyType = RigidbodyType2D.Dynamic;
+//        rb.gravityScale = 0f;
+//        rb.linearVelocity = firePoint.right * 20f;
+//        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+
+//        Object.Destroy(b, bulletLifetime);
+//    }
+
+//}

@@ -10,6 +10,7 @@ public class EnemyStateMachine : MonoBehaviour
     [Header("Patrol Bounds")]
     public float leftBound;
     public float rightBound;
+    public LayerMask obstacleMask;
 
     [Header("Ground & Edge Detection")]
     public Transform groundCheck;

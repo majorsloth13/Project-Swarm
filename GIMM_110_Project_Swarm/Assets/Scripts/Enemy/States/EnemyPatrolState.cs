@@ -33,7 +33,7 @@ public class EnemyPatrolState : IEnemyState
 
         bool isEdge = !hitGround;
 
-        MonoBehaviour.print("isEdge & hitGround: " + isEdge + " & " + hitGround);
+        //MonoBehaviour.print("isEdge & hitGround: " + isEdge + " & " + hitGround);
 
         if (isEdge)
         {
