@@ -1681,7 +1681,7 @@ Transform:
   m_GameObject: {fileID: 554977407}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.54855, y: 0.09189, z: 0}
+  m_LocalPosition: {x: 0.54855, y: 0.09189, z: -39.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4015,7 +4015,7 @@ GameObject:
   - component: {fileID: 1844977982}
   - component: {fileID: 1844977981}
   - component: {fileID: 1844977980}
-  - component: {fileID: 1844977979}
+  - component: {fileID: 1844977983}
   m_Layer: 0
   m_Name: Joker (1)
   m_TagString: Untagged
@@ -4023,25 +4023,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1844977979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1844977978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1778676317, guid: 8a9a760f95896c34689febc965510927, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mObserverBehaviour: {fileID: 1844977981}
-  mHiddenRoot: {fileID: 0}
-  mTargetName: 20251207_075805
-  mDatasetName: 
-  mCastedBehaviour: {fileID: 1844977981}
-  mMeshFilter: {fileID: 0}
-  mMeshRenderer: {fileID: 0}
 --- !u!114 &1844977980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4112,7 +4093,7 @@ MonoBehaviour:
   mMotionHint: 1
   mTrackingOptimization: 0
   mTrackingOptimizationNeedsUpgrade: 0
-  mPreview: {fileID: 1844977979}
+  mPreview: {fileID: 1844977983}
 --- !u!4 &1844977982
 Transform:
   m_ObjectHideFlags: 0
@@ -4129,6 +4110,25 @@ Transform:
   - {fileID: 464430480}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1844977983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844977978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1778676317, guid: 8a9a760f95896c34689febc965510927, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mObserverBehaviour: {fileID: 1844977981}
+  mHiddenRoot: {fileID: 0}
+  mTargetName: 20251207_075805
+  mDatasetName: 
+  mCastedBehaviour: {fileID: 1844977981}
+  mMeshFilter: {fileID: 0}
+  mMeshRenderer: {fileID: 0}
 --- !u!1 &1853926273
 GameObject:
   m_ObjectHideFlags: 0
