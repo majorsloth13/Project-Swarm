@@ -1,4 +1,4 @@
-/*using UnityEngine;
+using UnityEngine;
 
 public class AttackBoxFlip : MonoBehaviour
 {
@@ -32,4 +32,4 @@ public class AttackBoxFlip : MonoBehaviour
             transform.localScale = new Vector3(-1, 1, 1);
         }
     }
-}*/
+}

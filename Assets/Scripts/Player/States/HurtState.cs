@@ -36,12 +36,6 @@ public class HurtState : IPlayerState
         if (!health.isInvincible)
             rb.linearVelocity = knockbackForce;
         Iframe();
-
-        
-        
-
-
-        
     }
 
     public void Update()

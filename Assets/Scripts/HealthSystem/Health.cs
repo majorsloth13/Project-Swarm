@@ -8,6 +8,14 @@ public class Health : HealthBase
     private bool dead;                                      // Tracks death status
     private SpriteRenderer spriteRend;                      // For visual feedback (optional)
 
+    [Header("Invincibility")]
+    public bool isInvincible { get; private set; } = false;
+
+    public void SetInvincible(bool value)
+    {
+        isInvincible = value;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -29,7 +37,13 @@ public class Health : HealthBase
     /// </summary>
     public override void TakeDamage(float dmg)
     {
+        if (isInvincible)
+        {
+            Debug.Log("Damage avoided - invincible .");
+        }
+
         Debug.Log(name + " took " + dmg + " damage!");
+
         if (dead)
         {
             Debug.LogWarning("TakeDamage called while already dead!");
