@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using System.Collections;
 using UnityEngine;
 
 public class DeathState : IPlayerState
@@ -7,12 +5,14 @@ public class DeathState : IPlayerState
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
     private Animator anim;
+    private RespawnManager respawn; 
 
     public DeathState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
         anim = machine.GetComponent<Animator>();
+        respawn = Object.FindAnyObjectByType<RespawnManager>(); // find manager once
     }
 
     public void Enter()
@@ -24,11 +24,13 @@ public class DeathState : IPlayerState
         // Stop movement
         rb.linearVelocity = Vector2.zero;
 
-        // Disable state-machine-controlled movement
+        // Disable movement system
         machine.enabled = false;
+
+        // Call Respawn
+        respawn?.RespawnPlayer();  // << TRIGGER RESPAWN
     }
 
     public void Update() { }
-
     public void Exit() { }
 }
