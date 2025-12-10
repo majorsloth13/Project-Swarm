@@ -3,72 +3,76 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private RespawnManager respawnManager; // Reference to the respawn manager for handling player death
+    [Header("Health Settings")]
+    public float maxHealth = 100f;       // Maximum health
+    public float currentHealth;          // Current health, public for OverhealthState
 
-    [Header("Health")]
-    [SerializeField] private float startingHealth = 100f;   // Starting health
-    public float currentHealth { get; private set; }        // Public read-only access to current health
+    [SerializeField] private RespawnManager respawnManager;
 
-    private Animator anim;                                  // Animator reference
-    private bool dead;                                      // Tracks death status
-    private SpriteRenderer spriteRend;                      // For visual feedback (optional)
+    private Animator anim;
+    private bool dead = false;
 
     private void Awake()
     {
-        currentHealth = startingHealth;
+        currentHealth = maxHealth;
         anim = GetComponent<Animator>();
-        spriteRend = GetComponent<SpriteRenderer>();
+        Debug.Log($"Player starting health: {currentHealth}");
     }
 
     /// <summary>
-    /// Call this to deal damage to the player.
+    /// Deal damage to the player
     /// </summary>
     public void TakeDamage(float damage)
     {
-        Debug.Log($"{name} took {damage} damage! Called by: {new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().DeclaringType}");
-        if (dead)
-        {
-            Debug.LogWarning("TakeDamage called while already dead!");
-        }
+        if (dead) return;
 
-        // Subtract health, clamp between 0 and max
-        currentHealth = Mathf.Clamp(currentHealth - damage, 0, startingHealth);
-        Debug.Log($"Player took {damage} damage. Health: {currentHealth}");
+        currentHealth -= damage;
+        if (currentHealth < 0f) currentHealth = 0f;
 
-        if (currentHealth > 0)
+        Debug.Log($"Player took {damage} damage. Current health: {currentHealth}");
+
+        if (currentHealth == 0f)
         {
-            // Hurt feedback if still alive
-            anim?.SetTrigger("hurt");
+            Die();
         }
         else
         {
-            // Death sequence
-            if (!dead)
-            {
-                dead = true;
-                Debug.Log("Player died.");
-
-                anim?.SetTrigger("die");
-
-                // Disable movement temporarily
-                PlayerStateMachine move = GetComponent<PlayerStateMachine>();
-                if (move != null)
-                    move.enabled = false;
-
-                // Respawn after delay
-                if (respawnManager != null)
-                    respawnManager.RespawnPlayer();
-            }
+            anim?.SetTrigger("hurt");
         }
     }
 
     /// <summary>
-    /// Fully restores health and revives player.
+    /// Fully restore health
     /// </summary>
     public void ResetHealth()
     {
-        currentHealth = startingHealth;
+        currentHealth = maxHealth;
         dead = false;
-        Debug.Log("Player health reset to full.");
+        Debug.Log($"Player health reset: {currentHealth}");
+    }
+
+    /// <summary>
+    /// Temporarily apply extra health (overhealth)
+    /// </summary>
+    public void SetTemporaryHealth(float newHealth)
+    {
+        currentHealth = Mathf.Clamp(newHealth, 0f, maxHealth + 1000f);
+        Debug.Log($"Temporary health applied. Current health: {currentHealth}");
+    }
+
+    private void Die()
+    {
+        dead = true;
+        anim?.SetTrigger("die");
+
+        // Fix CS0131 by using a variable instead of null-conditional assignment
+        PlayerStateMachine psm = GetComponent<PlayerStateMachine>();
+        if (psm != null)
+        {
+            psm.enabled = false;
+        }
+
+        respawnManager?.RespawnPlayer();
+        Debug.Log("Player has died.");
     }
 }

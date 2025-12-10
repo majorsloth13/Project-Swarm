@@ -402,8 +402,9 @@ GameObject:
   - component: {fileID: 511052240}
   - component: {fileID: 511052239}
   - component: {fileID: 511052237}
-  - component: {fileID: 511052238}
+  - component: {fileID: 511052242}
   - component: {fileID: 511052241}
+  - component: {fileID: 511052243}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -475,36 +476,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &511052238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 511052235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8f1448413494d74aa1143262b903da1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  verticalSpeed: 10
-  horizontalSpeed: 10
-  jumpForce: 12
-  airMoveSpeed: 8
-  movementFps: 12
-  GroundCheck: {fileID: 786345213}
-  WallCheck: {fileID: 2037276129}
-  Rb: {fileID: 511052239}
-  coyoteTime: 0.12
-  jumpBufferTime: 0.12
-  bulletPrefab: {fileID: 3994048481817360869, guid: 1bd8cc622b6e1cd4b91a15664e5fc9e7, type: 3}
-  gunFirePoint: {fileID: 1140120065}
-  gunTransform: {fileID: 1878751610}
-  bulletLifetime: 4
-  powerUpActive: 0
-  gunCooldown: 0.3
-  gunCooldownTimer: 0
-  HasDoubleJump: 1
 --- !u!50 &511052239
 Rigidbody2D:
   serializedVersion: 5
@@ -601,9 +572,55 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc3b6edf93c830b4183775eb370d772d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 0
   respawnManager: {fileID: 0}
-  startingHealth: 6
+--- !u!114 &511052242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511052235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f1448413494d74aa1143262b903da1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStateMachine
+  verticalSpeed: 10
+  horizontalSpeed: 10
+  jumpForce: 12
+  airMoveSpeed: 8
+  movementFps: 12
+  GroundCheck: {fileID: 786345213}
+  WallCheck: {fileID: 2037276129}
+  Rb: {fileID: 511052239}
+  coyoteTime: 0.12
+  jumpBufferTime: 0.12
+  bulletPrefab: {fileID: 1878751609}
+  gunFirePoint: {fileID: 1140120065}
+  gunTransform: {fileID: 1878751610}
+  bulletLifetime: 2
+  powerUpActive: 0
+  gunCooldown: 0.25
+  gunCooldownTimer: 0
+  HasDoubleJump: 1
+--- !u!114 &511052243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511052235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d04186d0b20d35a4294f42bd1c19ca4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OverhealthState
+  overhealthAmount: 50
+  overhealthDuration: 5
+  decaySpeed: 20
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -905,14 +922,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ac5a706282a589489a499626cbd6b3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  comment: "Issues/Additions:\nFix bullets launching player upwards\n\nfix jumping
-    up wall when wallsliding - Marco\n\nPrevent enemy from falling through ground
-    when dying - Marco\n\nAdd Player Dash, Death,  and Respawn State \n \nImplement
-    EnemyRespawnState to where enemies randomly spawn and patrol platforms\n\nEnemy
-    Healthbars that appear when they are hit\n\nplayer healthbar\n\nAdd I-frames
-    after respawning\n\nImplement Health Sysytem properly for player and add a state
-    for Taking Damage\n\nChange to where when the enemy spots player, they constantly
-    chase until they are killed - Marco"
+  comment: 'Issues/Additions:
+
+
+    fix jumping up wall when wallsliding
+
+'
 --- !u!4 &722113908
 Transform:
   m_ObjectHideFlags: 0
@@ -2165,6 +2180,53 @@ Transform:
   - {fileID: 149113714}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1916814071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1916814073}
+  - component: {fileID: 1916814072}
+  m_Layer: 0
+  m_Name: Health
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1916814072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916814071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3b6edf93c830b4183775eb370d772d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  maxHealth: 100
+  currentHealth: 0
+  respawnManager: {fileID: 0}
+--- !u!4 &1916814073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916814071}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.93205, y: 1.02125, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2037276127
 GameObject:
   m_ObjectHideFlags: 0
@@ -2221,6 +2283,7 @@ SceneRoots:
   - {fileID: 789103468}
   - {fileID: 1887526514}
   - {fileID: 1820560420}
+  - {fileID: 1916814073}
   - {fileID: 511052236}
   - {fileID: 1785998585}
   - {fileID: 4755479}

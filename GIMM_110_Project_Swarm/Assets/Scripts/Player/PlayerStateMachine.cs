@@ -113,15 +113,14 @@ public class PlayerStateMachine : MonoBehaviour
         {
             SwitchState(new GunAttackState(
                 this,
-                //gunFireRate,
                 gunCooldown,
-                bulletPrefab,
                 gunFirePoint,
                 gunTransform,
                 bulletLifetime
             ));
             return;
         }
+
 
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mouseWorld - gunTransform.position).normalized;

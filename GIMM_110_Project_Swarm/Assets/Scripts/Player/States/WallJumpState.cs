@@ -5,24 +5,23 @@ public class WallJumpState : IPlayerState, IPlayerPhysicsState
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
 
-    private float jumpVerticalForce;
-    private float jumpHorizontalForce;
-    private float duration;
+    private float jumpVerticalForce = 10f;
+    private float jumpHorizontalForce = 6f;
+    private float duration = 0.18f;
     private float timer;
     private Vector2 initialVelocity;
 
-    public WallJumpState(PlayerStateMachine machine, float verticalForce = 10f, float horizontalForce = 6f, float duration = 0.18f)
+    public WallJumpState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
-        this.jumpVerticalForce = verticalForce;
-        this.jumpHorizontalForce = horizontalForce;
-        this.duration = duration;
     }
 
     public void Enter()
     {
         timer = 0f;
+
+        // Jump away from the wall
         float dir = machine.IsTouchingLeftWall ? 1f : -1f;
         initialVelocity = new Vector2(dir * jumpHorizontalForce, jumpVerticalForce);
         rb.linearVelocity = initialVelocity;
@@ -37,14 +36,16 @@ public class WallJumpState : IPlayerState, IPlayerPhysicsState
         if (timer >= duration)
         {
             machine.SwitchState(new FallState(machine));
-            return;
         }
     }
 
     public void FixedUpdate()
     {
         float xInput = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
+
+        // Combine wall jump push with horizontal input for smooth control
+        float horizontalVelocity = initialVelocity.x + xInput * machine.airMoveSpeed;
+        rb.linearVelocity = new Vector2(horizontalVelocity, rb.linearVelocity.y);
     }
 
     public void Exit() { }
