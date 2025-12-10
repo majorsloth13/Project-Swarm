@@ -583,7 +583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   verticalSpeed: 10
   horizontalSpeed: 10
-  jumpForce: 8
+  jumpForce: 12
   airMoveSpeed: 8
   movementFps: 12
   GroundCheck: {fileID: 786345213}
@@ -620,7 +620,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
