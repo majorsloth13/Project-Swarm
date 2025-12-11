@@ -13,7 +13,7 @@ public abstract class HealthBase : MonoBehaviour
     public virtual void TakeDamage(float dmg)
     {
         currentHealth -= dmg;
-
+        
         if (currentHealth <= 0f)
         {
             currentHealth = 0f;

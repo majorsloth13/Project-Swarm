@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Health : HealthBase
@@ -16,11 +17,19 @@ public class Health : HealthBase
         isInvincible = value;
     }
 
+    private PlayerStateMachine machine;
+
+   
+
+
+
+
     protected override void Awake()
     {
         base.Awake();
         anim = GetComponent<Animator>();
         spriteRend = GetComponent<SpriteRenderer>();
+        machine = GetComponent<PlayerStateMachine>();
         dead = false;
     }
 
@@ -37,27 +46,15 @@ public class Health : HealthBase
     /// </summary>
     public override void TakeDamage(float dmg)
     {
-        if (isInvincible)
+        if (!isInvincible)
         {
-            Debug.Log("Damage avoided - invincible .");
+            machine.SwitchState(new HurtState(machine));
+            base.TakeDamage(dmg);
         }
 
-        Debug.Log(name + " took " + dmg + " damage!");
-
-        if (dead)
-        {
-            Debug.LogWarning("TakeDamage called while already dead!");
-        }
-
-        base.TakeDamage(dmg);
-
-        if (!dead && currentHealth > 0)
-        {
-            if (anim != null)
-            // Hurt feedback if still alive
-            anim.SetTrigger("hurt");
-        }
+        
     }
+
     protected override void Die()
     {
         // Death sequence

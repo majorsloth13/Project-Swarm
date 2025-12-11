@@ -9,6 +9,7 @@ public class HurtState : IPlayerState
     private Animator anim;
     public Vector2 knockbackForce = new Vector2(-5f, 3f);
 
+   
     private float hurtDuration = 0.25f;   // how long the player stays in the hurt state
     private float hurtTimer;
 
@@ -21,21 +22,26 @@ public class HurtState : IPlayerState
     {
         this.machine = machine;
         rb = machine.Rb;
+        
         anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
     {
+        
+        Debug.Log("eneterd hurt state");
         health = machine.GetComponent<Health>();
         hurtTimer = hurtDuration;
 
         // Play animation only if you want to (optional)
         //anim.SetTrigger("hurt");
-        
+
         Debug.Log("skjhgfsufusbfusf");
         if (!health.isInvincible)
+        {
             rb.linearVelocity = knockbackForce;
-        Iframe();
+            Iframe();
+        }
     }
 
     public void Update()
@@ -46,12 +52,14 @@ public class HurtState : IPlayerState
         {
             machine.SwitchState(new IdleState(machine));
             Debug.Log("swithc to idle");
+            return;
         }
     }
 
     public void Exit()
     {
         // Anything to reset on exit� usually nothing needed.
+        Debug.Log("exited hurt state");
     }
 
     public void Iframe()
@@ -82,5 +90,6 @@ public class HurtState : IPlayerState
         health.SetInvincible(false);
         Debug.Log("is not invincible");
     }
-}
+
+} 
 

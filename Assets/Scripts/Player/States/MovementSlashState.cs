@@ -107,7 +107,8 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
             yield return null;
             
         }
-        rb.gravityScale = 1f;
+        rb.gravityScale = 3f;
+
         //while (floatTime < 1f)
         //{
         //    rb.gravityScale = 0f;

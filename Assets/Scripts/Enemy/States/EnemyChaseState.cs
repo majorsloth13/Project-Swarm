@@ -3,15 +3,18 @@
 public class EnemyChaseState : IEnemyState
 {
     private EnemyStateMachine ctx;
+    private LayerMask obstacleMask;
 
     public EnemyChaseState(EnemyStateMachine ctx)
     {
         this.ctx = ctx;
+        obstacleMask = LayerMask.GetMask("Ground", "Wall");
     }
 
-    public void Enter() { }
-
-    public bool HasLineOfSight(Transform enemy, Transform player, LayerMask obstacleMask)
+    public void Enter() {
+    }
+    
+    public bool HasLineOfSight(Transform enemy, Transform player)
     {
         Vector2 dir = player.position - enemy.position;
         float dist = dir.magnitude;
@@ -21,17 +24,21 @@ public class EnemyChaseState : IEnemyState
         // If hit something BEFORE the player → blocked
         if (hit.collider != null && !hit.collider.CompareTag("Player"))
         {
+            Debug.Log("raycast did not hit player");
             return false;
+            
         }
-
+        Debug.Log("hit player raycast");
         return true;
+        
     }
 
 
     public void Update()
     {
+        Debug.Log("in chase state");
 
-        if (!HasLineOfSight(ctx.transform, ctx.Player, ctx.obstacleMask))
+        if (!HasLineOfSight(ctx.transform, ctx.Player))
         {
             ctx.SwitchState(new EnemyPatrolState(ctx));
             return;

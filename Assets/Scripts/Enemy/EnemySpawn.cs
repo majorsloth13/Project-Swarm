@@ -12,7 +12,7 @@ public class EnemySpawn : MonoBehaviour
     public Transform[] EnemyPortal;
     public GameObject currentEnemyPortal;
     public GameObject randomItems;
-    private float delay = 2f;
+    public float delay = 2f;
     public int Count;
     private bool SpawnEnemyBool = true;
 
@@ -52,6 +52,7 @@ public class EnemySpawn : MonoBehaviour
         {
             SpawnEnemy();
             Count++;
+            
             yield return new WaitForSeconds(delay);
 
             if(Count == 35)

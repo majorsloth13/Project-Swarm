@@ -20,6 +20,7 @@ public class EnemyPatrolState : IEnemyState
     {
         if (ctx.sensor.playerDetected)
         {
+            Debug.Log("eneted chase state");
             ctx.SwitchState(new EnemyChaseState(ctx));
             return;
         }

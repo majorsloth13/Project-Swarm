@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Enemy
   - Bullet
+  - EnemyGroundCheck
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Bullet
   - EnemyGroundCollision
   - Level
-  - 
+  - obsiclemask
   - 
   - 
   - 
