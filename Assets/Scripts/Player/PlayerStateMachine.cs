@@ -155,9 +155,16 @@ public class PlayerStateMachine : MonoBehaviour
             }
          
         }
-        
 
-
+        if (Input.GetKeyDown(KeyCode.S)) // or whatever key triggers the attack
+        {
+            var unlock = GetComponent<GroundPoundUnlock>();
+            if (unlock != null && unlock.CanGroundPound)
+            {
+                SwitchState(new GroundPoundState(this));
+                return;
+            }
+        }
 
         //if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f)
         //{
@@ -179,6 +186,8 @@ public class PlayerStateMachine : MonoBehaviour
             FireBullet(); // no state switch
             return;
         }
+
+
 
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = (mouseWorld - gunTransform.position).normalized;

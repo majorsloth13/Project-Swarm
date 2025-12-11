@@ -1220,6 +1220,7 @@ GameObject:
   - component: {fileID: 511052237}
   - component: {fileID: 511052238}
   - component: {fileID: 511052241}
+  - component: {fileID: 511052242}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1424,6 +1425,18 @@ MonoBehaviour:
   maxHealth: 3
   currentHealth: 3
   respawnManager: {fileID: 462833005}
+--- !u!114 &511052242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511052235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3fa954c2b5246a4fafbcb0919783353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3555,6 +3568,7 @@ GameObject:
   - component: {fileID: 1766350030}
   - component: {fileID: 1766350033}
   - component: {fileID: 1766350034}
+  - component: {fileID: 1766350035}
   m_Layer: 0
   m_Name: Jack of Clubs
   m_TagString: Untagged
@@ -3656,7 +3670,7 @@ MonoBehaviour:
   mMotionHint: 1
   mTrackingOptimization: 0
   mTrackingOptimizationNeedsUpgrade: 0
-  mPreview: {fileID: 1766350034}
+  mPreview: {fileID: 1766350035}
 --- !u!4 &1766350032
 Transform:
   m_ObjectHideFlags: 0
@@ -3686,6 +3700,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetObject: {fileID: 475919835}
 --- !u!114 &1766350034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766350028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a3f327d1aead445ba82cf353eaa011, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 511052238}
+--- !u!114 &1766350035
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

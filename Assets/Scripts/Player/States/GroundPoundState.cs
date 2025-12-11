@@ -7,7 +7,6 @@ public class GroundPoundState : IPlayerState, IPlayerPhysicsState
     private float groundPoundSpeed = 30f;
     private bool hasLanded = false;
 
-    // Ground pound damage settings
     private int damage = 20;
     private float knockbackForce = 10f;
     private float knockbackRadius = 2f;
@@ -22,6 +21,9 @@ public class GroundPoundState : IPlayerState, IPlayerPhysicsState
     public void Enter()
     {
         rb.linearVelocity = new Vector2(0f, -groundPoundSpeed);
+
+        // Consume one-time ability
+        machine.GetComponent<GroundPoundUnlock>()?.Consume();
     }
 
     public void Update()
@@ -51,13 +53,7 @@ public class GroundPoundState : IPlayerState, IPlayerPhysicsState
         Collider2D[] hits = Physics2D.OverlapCircleAll(machine.transform.position, knockbackRadius);
         foreach (Collider2D hit in hits)
         {
-            //Enemy enemy = hit.GetComponent<Enemy>();
-            //if (enemy != null)
-            //{
-            //    // Knockback direction is away from player
-            //    Vector2 direction = (enemy.transform.position - machine.transform.position).normalized;
-            //    enemy.TakeDamage(damage, direction * knockbackForce);
-            //}
+            // TODO: Enemy damage here
         }
     }
 
