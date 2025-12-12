@@ -203,12 +203,20 @@ public class PlayerStateMachine : MonoBehaviour
 
             Debug.Log("Dropping through platform");
         }
+        FlipToGunDirection();
 
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = (mouseWorld - gunTransform.position).normalized;
 
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        // Check if the player is flipped (facing left)
+        if (transform.localScale.x < 0)
+        {
+            angle = 180f - angle;
+        }
+
+        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
 
             currentState?.Update();
         }
@@ -318,11 +326,48 @@ public class PlayerStateMachine : MonoBehaviour
     public void FlipToGunDirection()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            
-        if (mouseWorld.x > transform.position.x)
-            transform.localScale = new Vector3(2, 2, 1);
-        else
-            transform.localScale = new Vector3(-2, 2, 1);
+
+        // Determine the player's new scale based on  mouse position
+        float newPlayerScaleX = (mouseWorld.x > transform.position.x) ? 2f : -2f;
+
+        // Check if the player is actually flipping this frame
+        if (transform.localScale.x != newPlayerScaleX)
+        {
+            // Apply the flip to the player
+            transform.localScale = new Vector3(newPlayerScaleX, 2f, 1f);
+
+            // Counter flip the Gun's local scale to keep it upright
+            if (gunTransform != null)
+            {
+                float gunLocalScaleX;
+
+                if (newPlayerScaleX > 0)
+                {
+                    // Player faces right: Gun faces right (default sprite direction)
+                    gunLocalScaleX = 1f;
+                }
+                else
+                {
+
+                    gunLocalScaleX = 1f;
+                }
+
+
+                gunLocalScaleX = 1f;
+
+                gunTransform.localScale = new Vector3(
+                    gunLocalScaleX,
+                    gunTransform.localScale.y,
+                    gunTransform.localScale.z
+                );
+
+            }
+        }
+
+        /* if (mouseWorld.x > transform.position.x)
+             transform.localScale = new Vector3(2, 2, 1);
+         else
+             transform.localScale = new Vector3(-2, 2, 1);*/
     }
 
 
