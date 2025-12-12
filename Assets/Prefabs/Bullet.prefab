@@ -179,4 +179,4 @@ MonoBehaviour:
   bulletDamage: 5
   LayerMask:
     serializedVersion: 2
-    m_Bits: 704
+    m_Bits: 8896

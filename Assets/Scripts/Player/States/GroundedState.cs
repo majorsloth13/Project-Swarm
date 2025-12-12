@@ -25,12 +25,23 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
 
     public void Update()
     {
+        // Drop through input check
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            // Start DropRoutine
+            machine.StartCoroutine(machine.DropRoutine());
+
+            return;
+        }
+
+        // check if player is still grounded
         if (!machine.IsGrounded)
         {
             machine.SwitchState(new FallState(machine));
             return;
         }
 
+        // Jump input check
         if (Input.GetKeyDown(KeyCode.Space) || machine.TryConsumeJumpBuffer())
         {
             Debug.Log("got jump from grounded");
@@ -38,6 +49,7 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
             return;
         }
 
+        // Movement/Idle Transition
         float input = Input.GetAxisRaw("Horizontal");
         machine.FlipToGunDirection();
         if (Mathf.Abs(input) > 0.01f)

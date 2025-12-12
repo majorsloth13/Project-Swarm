@@ -48,7 +48,15 @@ public class PlayerStateMachine : MonoBehaviour
     public int currentDashCharges = 2;
     public float dashRechargeTime = 3f;
     private float dashRechargeTimer = 0f;
-    
+
+    [Header("Drop Through Platform")]
+    [SerializeField] private float dropDuration = 0.25f;
+    private bool isDropping = false;
+    //[SerializeField]private float dropForce = 10f;
+
+    [Header("Audio")]
+    [Tooltip("The sound effect plays when player dies")]
+    public AudioClip DeathSoundClip;
 
     // runtime timers
     internal float coyoteTimer = 0f;
@@ -61,6 +69,11 @@ public class PlayerStateMachine : MonoBehaviour
     // public flags
     public bool HasDoubleJump = true;   // rset when landing
 
+    private GroundCheck groundCheck;
+
+    public LayerMask dropMask;
+
+
     // Helpers (exposed for states)
     public bool IsGrounded => GroundCheck != null && GroundCheck.IsGrounded();
     public bool IsTouchingWall => WallCheck != null && WallCheck.IsTouchingWall;
@@ -72,14 +85,17 @@ public class PlayerStateMachine : MonoBehaviour
     //public IPlayerState DoubleJumpState;
     //public IPlayerState GroundedState;
 
+    private void Awake()
+    {
+        groundCheck = GetComponentInChildren<GroundCheck>();
+        Rb = GetComponent<Rigidbody2D>();
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (Rb == null) Rb = GetComponent<Rigidbody2D>();
         SwitchState(new GroundedState(this)); // start inside grounded parent
-
-
-
     }
 
         // Update is called once per frame
@@ -180,6 +196,14 @@ public class PlayerStateMachine : MonoBehaviour
             return;
         }
 
+        // press down to fall
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        {
+            StartCoroutine(DropRoutine());
+
+            Debug.Log("Dropping through platform");
+        }
+
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = (mouseWorld - gunTransform.position).normalized;
 
@@ -189,15 +213,58 @@ public class PlayerStateMachine : MonoBehaviour
             currentState?.Update();
         }
 
+        // FixedUpdate method
         void FixedUpdate()
         {
+            if (isDropping)
+            {
+                Rb.gravityScale = 2f;
+            }
+                
+
+            if (IsGrounded)
+            {
+                Rb.gravityScale = 1f;
+            }
+
             // Let the state apply physics ONLY here
             if (currentState is IPlayerPhysicsState physState)
             {
                 physState.FixedUpdate();
             }
+
         }
-    
+
+    public IEnumerator DropRoutine()
+    {
+        dropMask = LayerMask.GetMask("OneWayPlatform");
+        isDropping = true;
+        groundCheck.ignoreGroundCheck = true;
+
+        BoxCollider2D bc = GetComponent<BoxCollider2D>();
+        if (bc != null)
+        {
+            bc.enabled = false;
+            Debug.Log("BC Enabled? " + bc.enabled);
+        }
+
+        yield return new WaitForSeconds(dropDuration);
+
+        while (Rb.linearVelocity.y > 0.001f)
+        {
+            yield return null;
+        }
+
+        if (bc != null)
+        {
+            bc.enabled = true;
+        }
+
+        groundCheck.ignoreGroundCheck = false;
+        isDropping = false;
+
+        SwitchState(new FallState(this));
+    }
 
 
     /*private void HandleInput()
