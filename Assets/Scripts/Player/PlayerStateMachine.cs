@@ -73,9 +73,13 @@ public class PlayerStateMachine : MonoBehaviour
 
     public LayerMask dropMask;
 
+    internal PlatformEffector2D currentEffector = null;
+    internal Collider2D currentPlatformCollider = null;
+
 
     // Helpers (exposed for states)
-    public bool IsGrounded => GroundCheck != null && GroundCheck.IsGrounded();
+    public bool IsGrounded => 
+        !isDropping && GroundCheck != null && GroundCheck.IsGrounded();
     public bool IsTouchingWall => WallCheck != null && WallCheck.IsTouchingWall;
     public bool IsTouchingLeftWall => WallCheck != null && WallCheck.IsTouchingLeftWall;
     public bool IsTouchingRightWall => WallCheck != null && WallCheck.IsTouchingRightWall;
@@ -196,13 +200,6 @@ public class PlayerStateMachine : MonoBehaviour
             return;
         }
 
-        // press down to fall
-        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-        {
-            StartCoroutine(DropRoutine());
-
-            Debug.Log("Dropping through platform");
-        }
         FlipToGunDirection();
 
             Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -224,16 +221,10 @@ public class PlayerStateMachine : MonoBehaviour
         // FixedUpdate method
         void FixedUpdate()
         {
-            if (isDropping)
-            {
-                Rb.gravityScale = 2f;
-            }
-                
-
-            if (IsGrounded)
-            {
+           if (IsGrounded)
+           {
                 Rb.gravityScale = 1f;
-            }
+           }
 
             // Let the state apply physics ONLY here
             if (currentState is IPlayerPhysicsState physState)
@@ -245,34 +236,30 @@ public class PlayerStateMachine : MonoBehaviour
 
     public IEnumerator DropRoutine()
     {
-        dropMask = LayerMask.GetMask("OneWayPlatform");
-        isDropping = true;
-        groundCheck.ignoreGroundCheck = true;
-
-        BoxCollider2D bc = GetComponent<BoxCollider2D>();
-        if (bc != null)
+        if (currentEffector == null || currentPlatformCollider == null)
         {
-            bc.enabled = false;
-            Debug.Log("BC Enabled? " + bc.enabled);
+            yield break;
         }
+
+        isDropping = true;
+
+        Collider2D playerCollider = GetComponent<Collider2D>();
+
+        Physics2D.IgnoreCollision(playerCollider, currentPlatformCollider, true);
+
+        Rb.linearVelocity = new Vector2(Rb.linearVelocity.x, -5f);
 
         yield return new WaitForSeconds(dropDuration);
 
-        while (Rb.linearVelocity.y > 0.001f)
-        {
-            yield return null;
-        }
+        Physics2D.IgnoreCollision(playerCollider, currentPlatformCollider, false);
 
-        if (bc != null)
-        {
-            bc.enabled = true;
-        }
-
-        groundCheck.ignoreGroundCheck = false;
         isDropping = false;
+        currentEffector = null;
+        currentPlatformCollider = null;
 
         SwitchState(new FallState(this));
     }
+
 
 
     /*private void HandleInput()

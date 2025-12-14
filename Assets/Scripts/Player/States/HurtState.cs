@@ -44,7 +44,8 @@ public class HurtState : IPlayerState
 
         if (hurtTimer <= 0f)
         {
-            machine.SwitchState(new IdleState(machine));
+            machine.SwitchState(new GroundedState(machine));
+            //machine.SwitchState(new GroundedIdleState(machine));
             Debug.Log("swithc to idle");
         }
     }
