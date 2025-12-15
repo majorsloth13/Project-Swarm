@@ -211,6 +211,7 @@ public class PlayerStateMachine : MonoBehaviour
         if (transform.localScale.x < 0)
         {
             angle = 180f - angle;
+            angle = -angle;
         }
 
         gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);

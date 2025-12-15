@@ -34,6 +34,8 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log($"Bullet hit: {collision.gameObject.name} on Layer: {LayerMask.LayerToName(collision.gameObject.layer)}");
+
         // Replace CompareLayer with layer mask check
         if ((LayerMask.value & (1 << collision.gameObject.layer)) == 0)
             return;
