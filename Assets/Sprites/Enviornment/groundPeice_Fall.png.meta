@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 43b10395bcf7fa34187062e6ac4131bd
+guid: a8a08075a65a04349a329aaa6e295a20
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3830879372103699341
-    second: AR player_0
-  - first:
-      213: -8743248688964980518
-    second: AR player_1
+      213: 1973391836132639655
+    second: groundPeice_Fall_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -49,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 64
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -78,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -116,45 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: AR player_0
+      name: groundPeice_Fall_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 4
-        width: 39
-        height: 56
+        x: 0
+        y: 0
+        width: 32
+        height: 32
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d8bcc97fd740a2530800000000000000
-      internalID: 3830879372103699341
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: AR player_1
-      rect:
-        serializedVersion: 2
-        x: 15
-        y: 13
-        width: 36
-        height: 47
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: ad0b75f14adb9a680800000000000000
-      internalID: -8743248688964980518
+      spriteID: 7a387536b65e26b10800000000000000
+      internalID: 1973391836132639655
       vertices: []
       indices: 
       edges: []
@@ -163,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 3ac569cec7908e944a5ef53fdcbffdfa
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      AR player_0: 3830879372103699341
-      AR player_1: -8743248688964980518
+      groundPeice_Fall_0: 1973391836132639655
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
