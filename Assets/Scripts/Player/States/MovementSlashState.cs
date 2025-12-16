@@ -14,6 +14,7 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
     public float dashRechargeTime = 3f;
     private float dashRechargeTimer = 0f;
     private Health Hmachine;
+    private Animator anim;
     public MovementSlashState(PlayerStateMachine machine)
     {
         this.machine = machine;
@@ -25,12 +26,15 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
         {
             Debug.LogError("Health component not found on Player!");
         }
+        anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
     {
+        anim.SetBool("isSlashing", true);
         if (machine.slashHitbox != null)
             machine.slashHitbox.enabled = true;
+        
 
         Hmachine.isInvincible = true;
          // float during dash
@@ -90,7 +94,8 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
 
     public void Exit()
     {
-        
+        anim.SetBool("isSlashing", false);
+        //anim.SetBool("isSlashing", false);
         // restore gravity
         Debug.Log($"Exit {rb.gravityScale}");
         Hmachine.isInvincible = false;
