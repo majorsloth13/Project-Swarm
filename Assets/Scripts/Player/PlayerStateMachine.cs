@@ -39,7 +39,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("Power-Up")]
     public bool powerUpActive = true; // set true when player picks up power
-    public float powerUpTimer = 3f;
+    public float powerUpTimer;
     public bool hasActivated = false;
     // adjustable cooldown
     public float gunCooldown = 0.25f;     
@@ -48,9 +48,28 @@ public class PlayerStateMachine : MonoBehaviour
     public int currentDashCharges = 2;
     public float dashRechargeTime = 3f;
     private float dashRechargeTimer = 0f;
-    
+    public BoxCollider2D slashHitbox;
 
-    // runtime timers
+    [Header("Power-Up Slots")]
+    public ScannedCard[] powerUpSlots = new ScannedCard[2]
+{
+    ScannedCard.None,
+    ScannedCard.None
+};
+
+    [Header("card tracking")]
+    public ToggleOnTracking AcetoggleTracking;
+    public ToggleOnTracking kingtoggleTracking;
+    public ToggleOnTracking queentoggleTracking;
+    public ToggleOnTracking jackleTracking;
+    public ToggleOnTracking jokertoggleTracking;
+   
+    [Header("Diamond Skin")]
+    public bool diamondSkinActive = false;
+    public int diamondSkinMaxHealth = 6;
+    public int diamondSkinCurrentHealth = 1;
+    public GameObject diamondSkin;
+
     internal float coyoteTimer = 0f;
     internal float jumpBufferTimer = 0f;
 
@@ -85,15 +104,18 @@ public class PlayerStateMachine : MonoBehaviour
         // Update is called once per frame
         void Update()
         {
-            if (!IsGrounded)
+
+        if (!IsGrounded)
             {
             
                 coyoteTimer -= Time.deltaTime;
             }
             else
             {
-                coyoteTimer = coyoteTime; // rest whenever grounded
+
+            coyoteTimer = coyoteTime; // rest whenever grounded
             }
+        
 
             if (jumpBufferTimer > 0f)
             {
@@ -111,23 +133,41 @@ public class PlayerStateMachine : MonoBehaviour
             {
                 gunCooldownTimer -= Time.deltaTime;
             }
-            if (Input.GetKeyDown(KeyCode.LeftShift) && powerUpTimer == 3)
-            {
-                hasActivated = true;
-                gun.gameObject.SetActive(false);
 
-            }
-            else if (powerUpTimer <= 0f)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            ActivatePowerUp(powerUpSlots[0]);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            ActivatePowerUp(powerUpSlots[1]);
+        }
+
+        if (powerUpTimer <= 0f)
             {
                 hasActivated = false;
                 gun.gameObject.SetActive(true);
+            //AceScanned = false;
             
         }
-            // Power-up dash activation
-            if (!hasActivated && powerUpTimer <= 0)
+
+        // Deactivate shield if health <= 0
+        if (diamondSkinCurrentHealth <= 0)
+        {
+            Debug.Log("diamond skin broken");
+            diamondSkinActive = false;
+            diamondSkin.gameObject.SetActive(false);
+            
+        }
+
+
+
+        // Power-up dash activation
+        if (!hasActivated && powerUpTimer <= 0)
             {
 
-                powerUpTimer = 3f;
+                powerUpTimer = 15f;
 
 
             }
@@ -153,25 +193,21 @@ public class PlayerStateMachine : MonoBehaviour
                 
                 return;
             }
-         
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                StartCoroutine(SlashCoroutine());
+            }
+
+            IEnumerator SlashCoroutine()
+            {
+                slashHitbox.enabled = true;
+                yield return new WaitForSeconds(0.15f); // slash active time
+                slashHitbox.enabled = false;
+            }
+
+
         }
-        
-
-
-
-        //if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f)
-        //{
-        //    SwitchState(new GunAttackState(
-        //        this,
-        //        //gunFireRate,
-        //        gunCooldown,
-        //        bulletPrefab,
-        //        gunFirePoint,
-        //        gunTransform,
-        //        bulletLifetime
-        //    ));
-        //    return;
-        //}
 
         if (Input.GetMouseButtonDown(0) && gunCooldownTimer <= 0f && !hasActivated)
         {
@@ -182,8 +218,11 @@ public class PlayerStateMachine : MonoBehaviour
 
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = (mouseWorld - gunTransform.position).normalized;
+        
 
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
 
             currentState?.Update();
@@ -198,24 +237,6 @@ public class PlayerStateMachine : MonoBehaviour
             }
         }
     
-
-
-    /*private void HandleInput()
-    {
-        // 1 = Idle, 2 = Vertical, 3 = Horizontal
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SwitchState(new IdleState(this));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SwitchState(new VerticalState(this));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SwitchState(new HorizontalState(this));
-        }
-    }*/
 
     public void SwitchState(IPlayerState newState)
     {
@@ -281,4 +302,91 @@ public class PlayerStateMachine : MonoBehaviour
         Object.Destroy(b, bulletLifetime);
     }
 
+    public enum ScannedCard
+    {
+        None,
+        Ace,
+        King,
+        Queen,
+        Jack,
+        Joker
+    }
+
+    public ScannedCard scannedCard = ScannedCard.None;
+
+    public void AssignScannedCardToSlot(ScannedCard card)
+    {
+        // Ignore duplicates
+        if (powerUpSlots[0] == card || powerUpSlots[1] == card)
+            return;
+
+        if (powerUpSlots[0] == ScannedCard.None)
+        {
+            powerUpSlots[0] = card;
+            Debug.Log(card + " assigned to Slot 1");
+        }
+        else if (powerUpSlots[1] == ScannedCard.None)
+        {
+            powerUpSlots[1] = card;
+            Debug.Log(card + " assigned to Slot 2");
+        }
+    }
+
+    void ActivatePowerUp(ScannedCard card)
+    {
+        switch (card)
+        {
+            case ScannedCard.Ace:
+                ActivateAce();
+                break;
+
+            case ScannedCard.King:
+                ActivateKing();
+                break;
+
+            case ScannedCard.Queen:
+                ActivateQueen();
+                break;
+
+            case ScannedCard.Jack:
+                ActivateJack();
+                break;
+            
+            case ScannedCard.Joker:
+                ActivateJoker();
+                break;
+        }
+    }
+
+    void ActivateAce()
+    {
+        Debug.Log("Ace power activated");
+        hasActivated = true;
+        gun.gameObject.SetActive(false);
+    }
+
+    void ActivateKing()
+    {
+        Debug.Log("King power activated");
+        diamondSkinCurrentHealth = diamondSkinMaxHealth;
+        diamondSkinActive = true;
+        diamondSkin.SetActive(true);
+    }
+
+    void ActivateQueen()
+    {
+
+    }
+
+    void ActivateJack()
+    {
+
+    }
+
+    void ActivateJoker()
+    {
+
+    }
+
 }
+

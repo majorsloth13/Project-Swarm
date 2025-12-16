@@ -5,16 +5,19 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
     private float jumpForce;
+    private Animator anim;
 
     public DoubleJumpState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
         jumpForce = machine.jumpForce;
+        anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
     {
+        anim.SetBool("isjumping", true);
         Debug.Log("doubleJump");
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -44,5 +47,5 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
         rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
-    public void Exit() { }
+    public void Exit() { anim.SetBool("isjumping", false); }
 }

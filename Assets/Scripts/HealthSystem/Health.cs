@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,12 +10,12 @@ public class Health : HealthBase
     private SpriteRenderer spriteRend;                      // For visual feedback (optional)
 
     [Header("Invincibility")]
-    public bool isInvincible { get; private set; } = false;
+    public bool isInvincible /*{ get; private set; }*/ = false;
 
-    public void SetInvincible(bool value)
-    {
-        isInvincible = value;
-    }
+    //public void SetInvincible(bool value)
+    //{
+    //    isInvincible = value;
+    //}
 
     private PlayerStateMachine machine;
 
@@ -35,10 +35,7 @@ public class Health : HealthBase
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            TakeDamage(1);
-        }
+        
     }
 
     /// <summary>
@@ -46,14 +43,33 @@ public class Health : HealthBase
     /// </summary>
     public override void TakeDamage(float dmg)
     {
+        if (machine.diamondSkinActive)
+        {
+            machine.diamondSkinCurrentHealth -= (int)dmg;
+            Debug.Log("Diamond Skin HP: " + machine.diamondSkinCurrentHealth);
+
+            if (machine.diamondSkinCurrentHealth <= 0)
+            {
+                Debug.Log("the shiled has brokenafesbjsfjysdfgdgkdgyuseg");
+                machine.diamondSkinActive = false;
+                machine.diamondSkin.gameObject.SetActive(false); // <-- deactivate shield visually
+                //machine.KingScanned = false;
+            }
+
+            return; // block normal damage
+        }
+        
+
+        // Normal damage
         if (!isInvincible)
         {
             machine.SwitchState(new HurtState(machine));
             base.TakeDamage(dmg);
         }
-
-        
     }
+
+
+
 
     protected override void Die()
     {

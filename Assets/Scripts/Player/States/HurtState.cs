@@ -28,7 +28,7 @@ public class HurtState : IPlayerState
 
     public void Enter()
     {
-        
+        anim.SetBool("isHurt", true);
         Debug.Log("eneterd hurt state");
         health = machine.GetComponent<Health>();
         hurtTimer = hurtDuration;
@@ -60,6 +60,7 @@ public class HurtState : IPlayerState
     {
         // Anything to reset on exit� usually nothing needed.
         Debug.Log("exited hurt state");
+        anim.SetBool("isHurt", false);
     }
 
     public void Iframe()
@@ -69,7 +70,7 @@ public class HurtState : IPlayerState
 
     private IEnumerator IFrames()
     {
-        health.SetInvincible(true);
+        health.isInvincible = true;
 
         Debug.Log("is invincible");
         // Optional: Flash sprite
@@ -87,7 +88,7 @@ public class HurtState : IPlayerState
 
         if (sr != null) sr.enabled = true;
 
-        health.SetInvincible(false);
+        health.isInvincible = false;
         Debug.Log("is not invincible");
     }
 

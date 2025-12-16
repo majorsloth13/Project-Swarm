@@ -4,17 +4,20 @@ public class IdleState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
-
+    private Animator anim;
     public IdleState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
+        anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
     {
         Debug.Log("enetered idle");
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+        anim.SetBool("isRunning", false);
+        anim.SetBool("isFalling", false);
     }
 
     public void Update()
@@ -29,7 +32,7 @@ public class IdleState : IPlayerState, IPlayerPhysicsState
 
         float input = Input.GetAxisRaw("Horizontal");
         machine.FlipToGunDirection();
-        if (Mathf.Abs(input) > 0.01f)
+        if (Mathf.Abs(input) > 0.01f && machine.IsGrounded)
         {
             machine.SwitchState(new RunState(machine));
             return;

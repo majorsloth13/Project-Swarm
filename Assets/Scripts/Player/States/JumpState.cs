@@ -5,22 +5,26 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
     private float jumpForce = 5;
+    private Animator anim;
 
     public JumpState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
         jumpForce = machine.jumpForce;
+        anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
     {
         Debug.Log("jumped");
+        anim.SetBool("isjumping", true);
         // Reset vertical velocity
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
 
         // Directly set the upward velocity to make the player jump
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, machine.jumpForce); // use jumpHeight instead of jumpForce
+        
     }
 
     public void Update()
@@ -54,5 +58,7 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
         rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
-    public void Exit() { Debug.Log("JumpState ended"); }
+    public void Exit() { Debug.Log("JumpState ended");
+        anim.SetBool("isjumping", false);
+    }
 }

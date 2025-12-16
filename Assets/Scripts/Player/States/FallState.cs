@@ -4,14 +4,16 @@ public class FallState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     public Rigidbody2D rb;
+    private Animator anim;
 
     public FallState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
+        anim = machine.GetComponent<Animator>();
     }
 
-    public void Enter() { }
+    public void Enter() { anim.SetBool("isFalling", true); }
 
     public void Update()
     {
@@ -49,5 +51,5 @@ public class FallState : IPlayerState, IPlayerPhysicsState
         rb.linearVelocity = new Vector2(xInput * machine.airMoveSpeed, rb.linearVelocity.y);
     }
 
-    public void Exit() { }
+    public void Exit() { anim.SetBool("isFalling", false); }
 }

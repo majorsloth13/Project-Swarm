@@ -6,8 +6,11 @@ public class KillCounter : MonoBehaviour
     public static KillCounter Instance;
 
     [SerializeField] private TMP_Text killText;
+    
 
+    private EnemySpawn machine;
     public int killCount = 0;
+    
 
     void Awake()
     {
@@ -23,11 +26,20 @@ public class KillCounter : MonoBehaviour
         UpdateUI();
     }
 
+
     private void UpdateUI()
     {
         if (killText != null)
         {
             killText.text = "Kills: " + killCount;
         }
+        
     }
+
+    public void ResetKills()
+    {
+        killCount = 0;
+        UpdateUI();
+    }
+
 }

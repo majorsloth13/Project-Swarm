@@ -6,64 +6,68 @@ using UnityEngine;
 
 public class EnemySpawn : MonoBehaviour
 {
-    #region Variables
-    // Array setup for platforms
+    [Header("Enemy Settings")]
     public GameObject[] Enemy;
     public Transform[] EnemyPortal;
-    public GameObject currentEnemyPortal;
-    public GameObject randomItems;
-    public float delay = 2f;
-    public int Count;
-    private bool SpawnEnemyBool = true;
 
-    #endregion
+    [Header("Spawn Settings")]
+    public float delay = 1f;        // Delay between spawns
+    public int enemiesPerRound = 5; // How many enemies per round
+    public float timeBetweenRounds = 3f; // Delay between rounds
 
-    #region Unity Methods
+    public int currentRound = 1;
+    private bool roundInProgress = false;
+    private int enemiesSpawned = 0;
+    public CardChooseUI machine;
+    public KillCounter countkill;
+    public LevelCounter levelcounter;
+
+    //private int resetKillCounter;
     private void Start()
     {
-        GetItems();
-        StartCoroutine(SpawnRoutine());
-
-    }
-    #endregion
-
-    #region Custom Methods
-
-    /// Sets the platforms array to all objects with the tag "ItemPlatform".
-
-    private void Update()
-    {
-        
+        StartCoroutine(RoundRoutine());
     }
 
-    public void GetItems()
+    IEnumerator RoundRoutine()
     {
-
-        Enemy = GameObject.FindGameObjectsWithTag("Enemy");//creates an array of all objects with the items tag
-        Debug.Log("found item");
-
-
-
-    }
-
-    IEnumerator SpawnRoutine()
-    {
-        while (SpawnEnemyBool)
+        while (true)
         {
-            SpawnEnemy();
-            Count++;
-            
-            yield return new WaitForSeconds(delay);
+            yield return StartCoroutine(StartRound(currentRound));
+            // Wait until all enemies are dead
+            yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length == 1);
 
-            if(Count == 35)
-            {
-                SpawnEnemyBool = false;
-            }
+            Debug.Log("Round " + currentRound + " complete!");
+
+            currentRound++;
+            enemiesPerRound += 2; // optional: increase enemies per round
+            yield return new WaitForSeconds(timeBetweenRounds);
         }
     }
 
+    IEnumerator StartRound(int round)
+    {
+        if (machine == null)
+        {
+            Debug.LogError("machine is null in EnemySpawn!");
+            yield break;
+        }
+        levelcounter.AddLevel();
+        countkill.ResetKills();
+        machine.StartChooseUI();
+        machine.Scanning();
+        Debug.Log("Starting Round " + round);
+        enemiesSpawned = 0;
+        roundInProgress = true;
 
+        while (enemiesSpawned < enemiesPerRound)
+        {
+            SpawnEnemy();
+            enemiesSpawned++;
+            yield return new WaitForSeconds(delay);
+        }
 
+        roundInProgress = false;
+    }
 
     void SpawnEnemy()
     {
@@ -73,16 +77,10 @@ public class EnemySpawn : MonoBehaviour
             return;
         }
 
-        // choose random enemy
         GameObject enemyPrefab = Enemy[Random.Range(0, Enemy.Length)];
-
-        // choose random spawn point
         Transform spawnPoint = EnemyPortal[Random.Range(0, EnemyPortal.Length)];
 
-        // spawn enemy
         Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
-
         Debug.Log("Spawned enemy at " + spawnPoint.name);
     }
 }
-#endregion
