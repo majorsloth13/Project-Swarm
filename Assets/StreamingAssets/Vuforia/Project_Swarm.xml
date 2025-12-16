@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="King_of_Diamonds" size="1.000000 1.356075" />
+    <ImageTarget name="Queen_of_Hearts" size="1.000000 1.311327" />
+    <ImageTarget name="Jack_of_Clubs" size="1.000000 1.333333" />
+    <ImageTarget name="Ace_of_Spade" size="1.000000 1.315086" />
+    <ImageTarget name="Joker" size="1.000000 1.292052" />
+  </Tracking>
+</QCARConfig>

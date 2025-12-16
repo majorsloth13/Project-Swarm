@@ -75,7 +75,8 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
 
         if (!isDashing)
         {
-            machine.SwitchState(new IdleState(machine));
+            machine.SwitchState(new GroundedState(machine));
+            //machine.SwitchState(new GroundedIdleState(machine));
             return;
         }
 
