@@ -363,7 +363,7 @@ public class PlayerStateMachine : MonoBehaviour
                 }
                 else
                 {
-
+                    gunLocalScaleX = 0f;
                     gunLocalScaleX = 1f;
                 }
 
