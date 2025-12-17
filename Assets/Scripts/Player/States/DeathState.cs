@@ -17,9 +17,10 @@ public class DeathState : IPlayerState
 
     public void Enter()
     {
+        anim.SetBool("isHurt", true);
         Debug.Log("Died");
 
-        anim?.SetTrigger("die");
+        //anim?.SetTrigger("die");
 
         // Stop movement
         rb.linearVelocity = Vector2.zero;
@@ -30,5 +31,5 @@ public class DeathState : IPlayerState
 
     public void Update() { }
 
-    public void Exit() { }
+    public void Exit() { anim.SetBool("isHurt", false); }
 }

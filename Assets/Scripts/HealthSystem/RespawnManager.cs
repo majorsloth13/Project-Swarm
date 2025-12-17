@@ -5,9 +5,11 @@ public class RespawnManager : MonoBehaviour
 {
     [Header("Player Reference")]
     public Transform player;
-
+    
     private Health playerHealth;
     private Vector3 respawnPoint;
+
+    
 
     [Header("Settings")]
     [SerializeField] private float respawnDelay = 1f;
@@ -16,6 +18,7 @@ public class RespawnManager : MonoBehaviour
 
     private void Start()
     {
+        
         if (player == null)
         {
             Debug.LogWarning("Player not assigned to RespawnManager!");
@@ -29,6 +32,7 @@ public class RespawnManager : MonoBehaviour
     public void RespawnPlayer()
     {
         StartCoroutine(RespawnCoroutine());
+        
     }
 
     private IEnumerator RespawnCoroutine()
@@ -48,13 +52,13 @@ public class RespawnManager : MonoBehaviour
             movement.enabled = true;
 
         // Trigger animation
-        Animator anim = player.GetComponent<Animator>();
-        if (anim != null)
-        {
-            anim.SetTrigger("respawn");
-            yield return new WaitForSeconds(idleTransitionDelay);
-            anim.SetTrigger("idle");
-        }
+        //Animator anim = player.GetComponent<Animator>();
+        //if (anim != null)
+        //{
+        //    anim.SetBool("isWalking", true);
+        //    //yield return new WaitForSeconds(idleTransitionDelay);
+        //    //anim.SetTrigger("idle");
+        //}
 
         Debug.Log("Player respawned at RespawnManager position.");
     }

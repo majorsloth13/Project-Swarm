@@ -14,6 +14,7 @@ public class EnemyPatrolState : IEnemyState
     public void Enter()
     {
         startingPosition = ctx.transform.position;
+        Debug.Log("patrol has come");
     }
 
     public void Update()
