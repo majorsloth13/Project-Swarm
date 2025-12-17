@@ -43,6 +43,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: backgroundback
+    uniqueID: 3536773553
+    locked: 0
   - name: Background 1
     uniqueID: 1076125903
     locked: 0
@@ -57,6 +60,9 @@ TagManager:
     locked: 0
   - name: Background 5
     uniqueID: 1466254069
+    locked: 0
+  - name: ForeGround
+    uniqueID: 2415039351
     locked: 0
   - name: Default
     uniqueID: 0
