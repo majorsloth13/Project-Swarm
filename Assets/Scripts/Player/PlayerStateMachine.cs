@@ -53,10 +53,10 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("Power-Up Slots")]
     public ScannedCard[] powerUpSlots = new ScannedCard[2]
-{
+    {
     ScannedCard.None,
     ScannedCard.None
-};
+    };
 
     [Header("card tracking")]
     public ToggleOnTracking AcetoggleTracking;
@@ -269,7 +269,7 @@ public class PlayerStateMachine : MonoBehaviour
         {
            if (IsGrounded)
            {
-                Rb.gravityScale = 1f;
+                Rb.gravityScale = 3f;
            }
 
             // Let the state apply physics ONLY here
@@ -363,7 +363,7 @@ public class PlayerStateMachine : MonoBehaviour
                 }
                 else
                 {
-                    gunLocalScaleX = 0f;
+
                     gunLocalScaleX = 1f;
                 }
 
