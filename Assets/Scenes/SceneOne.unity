@@ -167,7 +167,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &10348827
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1853,14 +1853,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 511052236}
-  spawnPoints:
-  - {fileID: 953924817}
-  - {fileID: 1292239928}
-  - {fileID: 724156159}
-  - {fileID: 1749788504}
-  - {fileID: 1122433487}
   respawnDelay: 1.5
   idleTransitionDelay: 1.5
+  deathBoxTag: Deathbox
 --- !u!1 &464430479
 GameObject:
   m_ObjectHideFlags: 0
@@ -2384,7 +2379,7 @@ MonoBehaviour:
   diamondSkin: {fileID: 1340376154}
   dropDuration: 0.25
   DeathSoundClip: {fileID: 8300000, guid: ae3bc4fae69a5924c9663eb412e2133f, type: 3}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 511052244}
   HasDoubleJump: 1
   dropMask:
     serializedVersion: 2
@@ -3504,7 +3499,10 @@ MonoBehaviour:
     - player healthbar - done\n\nCarter Add I-frames after respawning\n\nSam - Implement
     Health Sysytem properly for player and add a state for Taking Damage - done\n\nMarco
     - Change to where when the enemy spots player, they constantly chase until they
-    are killed \n\nSet up AR - done"
+    are killed \n\nSet up AR - done\n\nBullets don't destroy on platforms, \n\nFix
+    enemies only patroling to the left\n\nFix the UI not displaying properly\n\nMain
+    Menu needs to actually pause\n\nGet aimations working again\n\nGet deathsound
+    working\n\nImplement enemy pathing"
 --- !u!4 &722113908
 Transform:
   m_ObjectHideFlags: 0
@@ -5370,17 +5368,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1270676015}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 366483316}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 144.0125, y: -35.300995}
-  m_SizeDelta: {x: -1025.3794, y: -239.7}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -176.1, y: 0}
+  m_SizeDelta: {x: 225.3794, y: 146.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1270676017
 MonoBehaviour:
@@ -6162,8 +6160,6 @@ GameObject:
   - component: {fileID: 1524194276}
   - component: {fileID: 1524194278}
   - component: {fileID: 1524194277}
-  - component: {fileID: 1524194281}
-  - component: {fileID: 1524194280}
   - component: {fileID: 1524194279}
   m_Layer: 7
   m_Name: Square (5)
@@ -6221,7 +6217,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.42500928, y: 0}
+  m_Offset: {x: 0.44265074, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -6231,7 +6227,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.14998144, y: 1}
+  m_Size: {x: 0.11469853, y: 1}
   m_EdgeRadius: 0
 --- !u!212 &1524194278
 SpriteRenderer:
@@ -6274,8 +6270,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1879927945
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ee5ddb223ea17494fbfd9a8941b77e47, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -6322,7 +6318,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.2534922, y: 0.28375983}
+  m_Offset: {x: 0.4422554, y: 0.28375983}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -6332,99 +6328,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.49301556, y: 0.43248034}
-  m_EdgeRadius: 0
---- !u!61 &1524194280
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524194275}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.34429532, y: 0.17025588}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.31140935, y: 0.6594882}
-  m_EdgeRadius: 0
---- !u!61 &1524194281
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524194275}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.33925056, y: -0.43888184}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.32149887, y: 0.12223631}
+  m_Size: {x: 0.115489185, y: 0.43248034}
   m_EdgeRadius: 0
 --- !u!1001 &1531807843
 PrefabInstance:
@@ -6828,7 +6732,6 @@ GameObject:
   - component: {fileID: 1657484403}
   - component: {fileID: 1657484402}
   - component: {fileID: 1657484401}
-  - component: {fileID: 1657484404}
   m_Layer: 7
   m_Name: Square (1)
   m_TagString: Wall
@@ -6923,8 +6826,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1879927945
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d6b32cb7eac6b8f49889b57398e5b575, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -6952,52 +6855,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 506998240}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &1657484404
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1657484400}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0.12766661, y: -0.4230582}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.14839368, y: 0.15388358}
-  m_EdgeRadius: 0
 --- !u!1 &1677472913
 GameObject:
   m_ObjectHideFlags: 0
@@ -7414,17 +7271,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1712603641}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 366483316}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -144.0125, y: -35.301}
-  m_SizeDelta: {x: -1025.3794, y: -239.7}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 176.1, y: 0}
+  m_SizeDelta: {x: 225.3794, y: 146.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1712603643
 MonoBehaviour:
@@ -8058,11 +7915,12 @@ GameObject:
   - component: {fileID: 1785998584}
   - component: {fileID: 1785998583}
   - component: {fileID: 1785998582}
+  - component: {fileID: 1785998590}
+  - component: {fileID: 1785998589}
   - component: {fileID: 1785998581}
   - component: {fileID: 1785998586}
   - component: {fileID: 1785998587}
   - component: {fileID: 1785998588}
-  - component: {fileID: 1785998589}
   m_Layer: 9
   m_Name: Enemy
   m_TagString: Enemy
@@ -8314,6 +8172,52 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!61 &1785998590
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785998580}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.04750061, y: -0.08952141}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.44460297, y: 0.85018873}
+  m_EdgeRadius: 0
 --- !u!1 &1793459640
 GameObject:
   m_ObjectHideFlags: 0
@@ -8497,7 +8401,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1801731295
 Transform:
   m_ObjectHideFlags: 0
@@ -8809,7 +8713,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1853926274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10442,7 +10346,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 246}
+  m_AnchoredPosition: {x: 0, y: 161.4}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2076940876
@@ -10608,22 +10512,30 @@ MonoBehaviour:
   - {fileID: 1785998580}
   EnemyPortal:
   - {fileID: 654108607}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1710372540}
+  - {fileID: 49878641}
+  - {fileID: 1531807844}
+  - {fileID: 562643487}
+  - {fileID: 395185241}
+  - {fileID: 313096339}
+  - {fileID: 582684861}
+  - {fileID: 1868250459}
+  - {fileID: 566533340}
+  - {fileID: 186087096}
+  - {fileID: 1103203713}
+  - {fileID: 1983323342}
+  - {fileID: 1701442077}
+  - {fileID: 1910992737}
+  - {fileID: 678684230}
+  - {fileID: 779597652}
+  - {fileID: 378552650}
+  - {fileID: 1766199659}
+  - {fileID: 926295695}
+  - {fileID: 423895924}
+  - {fileID: 726305920}
+  - {fileID: 1234364302}
+  - {fileID: 1808315040}
+  - {fileID: 1858838244}
   delay: 2
   enemiesPerRound: 35
   timeBetweenRounds: 3

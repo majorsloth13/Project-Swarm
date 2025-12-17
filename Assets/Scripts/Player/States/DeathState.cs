@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class DeathState : IPlayerState
@@ -12,36 +13,55 @@ public class DeathState : IPlayerState
         this.machine = machine;
         rb = machine.Rb;
         anim = machine.GetComponent<Animator>();
-        respawn = Object.FindAnyObjectByType<RespawnManager>(); // find manager once
+        respawn = Object.FindAnyObjectByType<RespawnManager>();
     }
 
     public void Enter()
     {
-        anim.SetBool("isHurt", true);
         Debug.Log("Died");
 
-        //anim?.SetTrigger("die");
-
-        // Play the death sound using the static helper
-        AudioClip deathClip = machine.DeathSoundClip;
-
-        if (deathClip != null)
+        if (anim != null)
         {
-            // PlayClipAtPoint creates a one-shot AudioSource at the player's position
-            AudioSource.PlayClipAtPoint(deathClip, machine.transform.position);
+            anim.SetBool("isHurt", true);
         }
 
         // Stop movement
         rb.linearVelocity = Vector2.zero;
 
-        // Disable movement system
-        machine.enabled = false;
+        // Play death sound
+        if (machine.DeathSoundClip != null && machine.audioSource != null)
+        {
+            machine.audioSource.Stop();
+            machine.audioSource.clip = machine.DeathSoundClip;
+            machine.audioSource.Play();
+        }
 
-        // Call Respawn
-        respawn?.RespawnPlayer();
+        // Start respawn delay coroutine 
+        machine.StartCoroutine(DeathRoutine());
     }
 
-    public void Update() { }
+    public void Update()
+    {
+        // Intentionally empty (player is dead)
+    }
 
-    public void Exit() { anim.SetBool("isHurt", false); }
+    public void Exit()
+    {
+        if (anim != null)
+        {
+            anim.SetBool("isHurt", false);
+        }
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        machine.enabled = false;
+
+        if (respawn != null)
+        {
+            respawn.RespawnPlayer();
+        }
+    }
 }

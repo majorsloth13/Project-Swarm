@@ -79,6 +79,7 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("Audio")]
     [Tooltip("The sound effect plays when player dies")]
     public AudioClip DeathSoundClip;
+    public AudioSource audioSource;
 
     internal float coyoteTimer = 0f;
     internal float jumpBufferTimer = 0f;
@@ -114,6 +115,8 @@ public class PlayerStateMachine : MonoBehaviour
     {
         groundCheck = GetComponentInChildren<GroundCheck>();
         Rb = GetComponent<Rigidbody2D>();
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -305,7 +308,7 @@ public class PlayerStateMachine : MonoBehaviour
 
         SwitchState(new FallState(this));
     }
-
+    
 
     public void SwitchState(IPlayerState newState)
     {
