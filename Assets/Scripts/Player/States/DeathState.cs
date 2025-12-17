@@ -17,9 +17,10 @@ public class DeathState : IPlayerState
 
     public void Enter()
     {
+        anim.SetBool("isHurt", true);
         Debug.Log("Died");
 
-        anim?.SetTrigger("die");
+        //anim?.SetTrigger("die");
 
         // Play the death sound using the static helper
         AudioClip deathClip = machine.DeathSoundClip;
@@ -42,5 +43,5 @@ public class DeathState : IPlayerState
 
     public void Update() { }
 
-    public void Exit() { }
+    public void Exit() { anim.SetBool("isHurt", false); }
 }
