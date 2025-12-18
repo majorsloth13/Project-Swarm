@@ -37,6 +37,11 @@ public class PlayerStateMachine : MonoBehaviour
     public float bulletLifetime = 2f;
     public GameObject gun;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip deathSoundClip;
+
+
     [Header("Power-Up")]
     public bool powerUpActive = true; // set true when player picks up power
     public float powerUpTimer;
@@ -44,7 +49,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool clubActivated = false;
     // adjustable cooldown
     public float gunCooldown = 0.25f;     
-   [HideInInspector] public float gunCooldownTimer = 0f;
+    [HideInInspector] public float gunCooldownTimer = 0f;
     public int maxDashCharges = 2;
     public int currentDashCharges = 2;
     public float dashRechargeTime = 3f;
@@ -71,6 +76,11 @@ public class PlayerStateMachine : MonoBehaviour
     public int diamondSkinCurrentHealth = 1;
     public GameObject diamondSkin;
 
+    [Header("Drop Through Platform")]
+    [SerializeField] private float dropDuration = 0.25f;
+    private bool isDropping = false;
+    //[SerializeField]private float dropForce = 10f;
+
     internal float coyoteTimer = 0f;
     internal float jumpBufferTimer = 0f;
 
@@ -82,6 +92,14 @@ public class PlayerStateMachine : MonoBehaviour
 
     // public flags
     public bool HasDoubleJump = true;   // rset when landing
+    public bool isIdle = false;
+
+    private GroundCheck groundCheck;
+
+    public LayerMask dropMask;
+
+    internal PlatformEffector2D currentEffector = null;
+    internal Collider2D currentPlatformCollider = null;
 
     // Helpers (exposed for states)
     public bool IsGrounded => GroundCheck != null && GroundCheck.IsGrounded();
@@ -98,44 +116,44 @@ public class PlayerStateMachine : MonoBehaviour
     void Start()
     {
         if (Rb == null) Rb = GetComponent<Rigidbody2D>();
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+
         SwitchState(new GroundedState(this)); // start inside grounded parent
-
-
-
     }
 
-        // Update is called once per frame
-        void Update()
-        {
+    // Update is called once per frame
+    void Update()
+    {
+        Debug.Log("Current State: " + currentState?.GetType().Name);
 
         if (!IsGrounded)
-            {
-            
-                coyoteTimer -= Time.deltaTime;
-            }
-            else
-            {
+        {
+
+            coyoteTimer -= Time.deltaTime;
+        }
+        else
+        {
 
             coyoteTimer = coyoteTime; // rest whenever grounded
-            }
-        
+        }
 
-            if (jumpBufferTimer > 0f)
-            {
-                jumpBufferTimer -= Time.deltaTime;
-            }
 
-            // capture jump input (buffer)
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                jumpBufferTimer = jumpBufferTime;
-            }
+        if (jumpBufferTimer > 0f)
+        {
+            jumpBufferTimer -= Time.deltaTime;
+        }
 
-            // cooldown countdown
-            if (gunCooldownTimer > 0f)
-            {
-                gunCooldownTimer -= Time.deltaTime;
-            }
+        // capture jump input (buffer)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            jumpBufferTimer = jumpBufferTime;
+        }
+
+        // cooldown countdown
+        if (gunCooldownTimer > 0f)
+        {
+            gunCooldownTimer -= Time.deltaTime;
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -148,11 +166,11 @@ public class PlayerStateMachine : MonoBehaviour
         }
 
         if (powerUpTimer <= 0f)
-            {
-                hasActivated = false;
-                gun.gameObject.SetActive(true);
+        {
+            hasActivated = false;
+            gun.gameObject.SetActive(true);
             //AceScanned = false;
-            
+
         }
 
         if (clubActivated == true)
@@ -174,12 +192,12 @@ public class PlayerStateMachine : MonoBehaviour
 
         // Power-up dash activation
         if (!hasActivated && powerUpTimer <= 0)
-            {
+        {
 
-                powerUpTimer = 15f;
+            powerUpTimer = 15f;
 
 
-            }
+        }
         if (hasActivated)
         {
             powerUpTimer -= Time.deltaTime;
@@ -192,17 +210,17 @@ public class PlayerStateMachine : MonoBehaviour
                     currentDashCharges++;
                     dashRechargeTimer = 0f;
                 }
-                
+
             }
 
-            
+
 
             if (Input.GetMouseButtonDown(1) && currentDashCharges > 0)
             {
                 Debug.Log("slashed");
                 currentDashCharges--;
                 SwitchState(new MovementSlashState(this));
-                
+
                 return;
             }
 
@@ -228,27 +246,83 @@ public class PlayerStateMachine : MonoBehaviour
             return;
         }
 
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 direction = (mouseWorld - gunTransform.position).normalized;
-        
+        FlipToGunDirection();
 
-        
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 direction = (mouseWorld - gunTransform.position).normalized;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-            currentState?.Update();
+        // Check if the player is flipped (facing left)
+        if (transform.localScale.x < 0)
+        {
+            angle = 180f - angle;
+            angle = -angle;
         }
 
+        gunTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+
+        currentState?.Update();
+    }
+        
+
+        // FixedUpdate method
         void FixedUpdate()
         {
+            if (IsGrounded)
+            {
+                Rb.gravityScale = 3f;
+            }
+
             // Let the state apply physics ONLY here
             if (currentState is IPlayerPhysicsState physState)
             {
                 physState.FixedUpdate();
             }
+
         }
-    
+
+    public IEnumerator DropRoutine()
+    {
+        if (currentPlatformCollider == null) yield break;
+
+        // 1. CAPTURE the platform in a local variable
+        Collider2D platformToFix = currentPlatformCollider;
+        Collider2D playerCollider = GetComponent<Collider2D>();
+
+        isDropping = true;
+
+        // 2. Use the local variable to ignore
+        Physics2D.IgnoreCollision(playerCollider, platformToFix, true);
+
+        Rb.linearVelocity = new Vector2(Rb.linearVelocity.x, -5f);
+
+        yield return new WaitForSeconds(dropDuration);
+
+        // 3. Use the local variable to re-enable
+        // This works even if machine.currentPlatformCollider was set to null!
+        if (platformToFix != null)
+        {
+            Physics2D.IgnoreCollision(playerCollider, platformToFix, false);
+        }
+
+        isDropping = false;
+
+        // Only clear these if they haven't been changed by a new platform
+        if (currentPlatformCollider == platformToFix)
+        {
+            currentPlatformCollider = null;
+            currentEffector = null;
+        }
+
+        // Only switch to fall if we are actually in the air
+        if (!IsGrounded)
+        {
+            SwitchState(new FallState(this));
+        }
+    }
 
     public void SwitchState(IPlayerState newState)
     {
@@ -284,11 +358,48 @@ public class PlayerStateMachine : MonoBehaviour
     public void FlipToGunDirection()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            
-        if (mouseWorld.x > transform.position.x)
-            transform.localScale = new Vector3(2, 2, 1);
-        else
-            transform.localScale = new Vector3(-2, 2, 1);
+
+        // Determine the player's new scale based on  mouse position
+        float newPlayerScaleX = (mouseWorld.x > transform.position.x) ? 2f : -2f;
+
+        // Check if the player is actually flipping this frame
+        if (transform.localScale.x != newPlayerScaleX)
+        {
+            // Apply the flip to the player
+            transform.localScale = new Vector3(newPlayerScaleX, 2f, 1f);
+
+            // Counter flip the Gun's local scale to keep it upright
+            if (gunTransform != null)
+            {
+                float gunLocalScaleX;
+
+                if (newPlayerScaleX > 0)
+                {
+                    // Player faces right: Gun faces right (default sprite direction)
+                    gunLocalScaleX = 1f;
+                }
+                else
+                {
+
+                    gunLocalScaleX = 1f;
+                }
+
+
+                gunLocalScaleX = 1f;
+
+                gunTransform.localScale = new Vector3(
+                    gunLocalScaleX,
+                    gunTransform.localScale.y,
+                    gunTransform.localScale.z
+                );
+
+            }
+        }
+
+        /* if (mouseWorld.x > transform.position.x)
+             transform.localScale = new Vector3(2, 2, 1);
+         else
+             transform.localScale = new Vector3(-2, 2, 1);*/
     }
 
 
@@ -414,6 +525,28 @@ public class PlayerStateMachine : MonoBehaviour
         if (currentState is IPlayerPhysicsState physState)
         {
             physState.OnCollisionEnter2D(collision);
+        }
+    }
+
+    // Update your existing OnCollisionEnter2D or add these:
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // Check if what we are touching is on the "Drop" layer
+        // (Ensure your platforms are on the layer you assigned to dropMask)
+        if (((1 << collision.gameObject.layer) & dropMask) != 0)
+        {
+            currentPlatformCollider = collision.collider;
+            currentEffector = collision.gameObject.GetComponent<PlatformEffector2D>();
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        // Clear the references when we leave the platform
+        if (collision.collider == currentPlatformCollider)
+        {
+            currentPlatformCollider = null;
+            currentEffector = null;
         }
     }
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Threading;
 using UnityEngine;
 
-public class HurtState : IPlayerState
+public class HurtState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
@@ -28,7 +28,11 @@ public class HurtState : IPlayerState
 
     public void Enter()
     {
-        anim.SetBool("isHurt", true);
+        if (anim == null) anim = machine.GetComponent<Animator>();
+
+        // 1. Fire the trigger to follow the arrow into Hurt Anim
+        anim.SetTrigger("hurt");
+        //anim.SetBool("isHurt", true);
         Debug.Log("eneterd hurt state");
         health = machine.GetComponent<Health>();
         hurtTimer = hurtDuration;
@@ -56,6 +60,8 @@ public class HurtState : IPlayerState
             return;
         }
     }
+
+    public void FixedUpdate() { }
 
     public void Exit()
     {

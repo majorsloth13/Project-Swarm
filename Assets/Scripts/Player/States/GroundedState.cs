@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class GroundedState : IPlayerState//, IPlayerPhysicsState
+public class GroundedState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
+    private Animator anim;
 
     public IGroundedSubState currentSubState;
 
@@ -11,6 +12,7 @@ public class GroundedState : IPlayerState//, IPlayerPhysicsState
     {
         this.machine = machine;
         rb = machine.Rb;
+        anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
@@ -18,7 +20,21 @@ public class GroundedState : IPlayerState//, IPlayerPhysicsState
         machine.HasDoubleJump = true;
         machine.coyoteTimer = machine.coyoteTime;
 
-        SetSubState(new GroundedIdleState(machine, this));
+        Debug.Log("entered grounded idle");
+
+        if (anim == null) anim = machine.GetComponent<Animator>();
+
+        // Clear any triggers that might be "pending"
+        anim.ResetTrigger("hurtTrigger");
+        anim.SetBool("isFalling", false);
+
+        float moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (Mathf.Abs(moveInput) > 0.01f)
+            SetSubState(new GroundedRunState(machine, this));
+        else
+            SetSubState(new GroundedIdleState(machine, this));
+        
 
         if (machine.TryConsumeJumpBuffer())
         {
@@ -40,6 +56,12 @@ public class GroundedState : IPlayerState//, IPlayerPhysicsState
             Debug.Log("got jump from grounded");
             machine.SwitchState(new JumpState(machine));
             return;
+        }
+
+        if(Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            machine.StartCoroutine(machine.DropRoutine());
+            return;                     
         }
 
         currentSubState?.Update();
@@ -66,6 +88,11 @@ public class GroundedState : IPlayerState//, IPlayerPhysicsState
     public void Exit() 
     {
         currentSubState?.Exit();
+    }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        //currentSubState?.OnCollisionEnter2D(collision);
     }
 
     public void SetSubState(IGroundedSubState subState)
