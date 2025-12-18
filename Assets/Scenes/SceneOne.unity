@@ -2253,11 +2253,10 @@ GameObject:
   - component: {fileID: 511052240}
   - component: {fileID: 511052239}
   - component: {fileID: 511052237}
+  - component: {fileID: 511052242}
   - component: {fileID: 511052238}
   - component: {fileID: 511052241}
-  - component: {fileID: 511052242}
   - component: {fileID: 511052244}
-  - component: {fileID: 511052243}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -2505,14 +2504,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!81 &511052243
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 511052235}
-  m_Enabled: 1
 --- !u!82 &511052244
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2524,7 +2515,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: ae3bc4fae69a5924c9663eb412e2133f, type: 3}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -2620,7 +2611,6 @@ GameObject:
   m_Component:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
-  - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
   m_Layer: 0
@@ -2630,14 +2620,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &519420029
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
 --- !u!114 &519420030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3499,10 +3481,10 @@ MonoBehaviour:
     - player healthbar - done\n\nCarter Add I-frames after respawning\n\nSam - Implement
     Health Sysytem properly for player and add a state for Taking Damage - done\n\nMarco
     - Change to where when the enemy spots player, they constantly chase until they
-    are killed \n\nSet up AR - done\n\nBullets don't destroy on platforms, \n\nFix
-    enemies only patroling to the left\n\nFix the UI not displaying properly\n\nMain
-    Menu needs to actually pause\n\nGet aimations working again\n\nGet deathsound
-    working\n\nImplement enemy pathing"
+    are killed \n\nSet up AR - done\n\nBullets don't destroy on platforms - done\n\nFix
+    enemies only patroling to the left\n\nFix the UI not displaying properly - done\n\nMain
+    Menu needs to actually pause\n\nGet animations working again\n\nGet deathsound
+    working - done\n\nImplement enemy pathing\n\nImplement I-Frames"
 --- !u!4 &722113908
 Transform:
   m_ObjectHideFlags: 0
@@ -3543,7 +3525,7 @@ Transform:
   m_GameObject: {fileID: 724156158}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.4, y: -6.1, z: 0}
+  m_LocalPosition: {x: 14.62, y: 8.28, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4433,7 +4415,7 @@ Transform:
   m_GameObject: {fileID: 953924816}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.4, y: 14.4, z: 0}
+  m_LocalPosition: {x: -16.57, y: 14.92, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4973,7 +4955,7 @@ Transform:
   m_GameObject: {fileID: 1122433486}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 60.5, y: -3, z: 0}
+  m_LocalPosition: {x: 57.41, y: -3.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5443,7 +5425,7 @@ Transform:
   m_GameObject: {fileID: 1292239927}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 59.7, y: -4.2, z: 0}
+  m_LocalPosition: {x: 53.38, y: 2.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7441,7 +7423,7 @@ Transform:
   m_GameObject: {fileID: 1749788503}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 59.1, y: 10.3, z: 0}
+  m_LocalPosition: {x: 53.1, y: 12.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

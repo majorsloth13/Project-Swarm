@@ -129,7 +129,6 @@ public class PlayerStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (!IsGrounded)
         {
 
@@ -185,7 +184,6 @@ public class PlayerStateMachine : MonoBehaviour
             diamondSkin.gameObject.SetActive(false);
 
         }
-
 
 
         // Power-up dash activation

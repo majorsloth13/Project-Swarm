@@ -71,27 +71,24 @@ public class Health : HealthBase
 
 
 
-    protected override void Die()
+protected override void Die()
+{
+    if (dead)
+        return;
+
+    dead = true;
+    Debug.Log("Player died (routing to DeathState)");
+
+    if (machine != null)
     {
-        // Death sequence
-        if (dead)
-            return;
-
-        dead = true;
-        Debug.Log("Player died.");
-
-        if (anim != null)
-            anim.SetTrigger("die");
-
-        // Disable movement temporarily
-        PlayerStateMachine move = GetComponent<PlayerStateMachine>();
-        if (move != null)
-            move.enabled = false;
-
-            // Respawn after delay
-            if (respawnManager != null)
-                respawnManager.RespawnPlayer();
+        machine.SwitchState(new DeathState(machine));
     }
+    else
+    {
+        Debug.LogError("PlayerStateMachine missing on player!");
+    }
+}
+
     
 
     /// <summary>

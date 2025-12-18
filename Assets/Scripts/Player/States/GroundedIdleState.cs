@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GroundedIdleState : IGroundedSubState
+public class GroundedIdleState : IGroundedSubState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private GroundedState parent;

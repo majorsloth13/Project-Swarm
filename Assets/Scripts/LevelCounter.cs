@@ -30,9 +30,9 @@ public class LevelCounter : MonoBehaviour
     private void UpdateUI()
     {
        if (levelCounter != null)
-        {
+       {
             levelCounter.text = "Round: " + LevelCount;
-        }
+       }
 
     }
 }

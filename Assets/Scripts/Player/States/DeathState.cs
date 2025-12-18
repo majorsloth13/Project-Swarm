@@ -18,7 +18,9 @@ public class DeathState : IPlayerState
 
     public void Enter()
     {
-        Debug.Log("Died");
+        Debug.Log("DeathState FILE: " + GetType().AssemblyQualifiedName);
+
+        Debug.Log("DeathState Enter reached");
 
         if (anim != null)
         {
@@ -28,16 +30,39 @@ public class DeathState : IPlayerState
         // Stop movement
         rb.linearVelocity = Vector2.zero;
 
+        Debug.Log("AudioSource null? " + (machine.audioSource == null));
+        Debug.Log("Death clip null? " + (machine.DeathSoundClip == null));
+
         // Play death sound
         if (machine.DeathSoundClip != null && machine.audioSource != null)
         {
-            machine.audioSource.Stop();
-            machine.audioSource.clip = machine.DeathSoundClip;
+            //machine.audioSource.Stop();
+            machine.audioSource.PlayOneShot(machine.DeathSoundClip);
             machine.audioSource.Play();
-        }
 
+            Debug.Log("Attempted to play death sound");
+        }
+        else
+        {
+            Debug.LogWarning("Death sound NOT played due to null reference");
+        }
         // Start respawn delay coroutine 
         machine.StartCoroutine(DeathRoutine());
+    }
+
+    private IEnumerator DeathRoutine()
+    {
+        machine.enabled = false;
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (respawn != null)
+        {
+            respawn.RespawnPlayer();
+        }
+        // Re-enable immediately after respawn
+        //machine.enabled = true;
+        machine.SwitchState(new GroundedState(machine));
     }
 
     public void Update()
@@ -53,15 +78,5 @@ public class DeathState : IPlayerState
         }
     }
 
-    private IEnumerator DeathRoutine()
-    {
-        yield return new WaitForSeconds(0.5f);
 
-        machine.enabled = false;
-
-        if (respawn != null)
-        {
-            respawn.RespawnPlayer();
-        }
-    }
 }
