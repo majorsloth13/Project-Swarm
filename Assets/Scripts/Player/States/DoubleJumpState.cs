@@ -48,4 +48,9 @@ public class DoubleJumpState : IPlayerState, IPlayerPhysicsState
     }
 
     public void Exit() { anim.SetBool("isjumping", false); }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

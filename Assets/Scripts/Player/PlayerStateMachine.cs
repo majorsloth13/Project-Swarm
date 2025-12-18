@@ -41,6 +41,7 @@ public class PlayerStateMachine : MonoBehaviour
     public bool powerUpActive = true; // set true when player picks up power
     public float powerUpTimer;
     public bool hasActivated = false;
+    public bool clubActivated = false;
     // adjustable cooldown
     public float gunCooldown = 0.25f;     
    [HideInInspector] public float gunCooldownTimer = 0f;
@@ -72,6 +73,8 @@ public class PlayerStateMachine : MonoBehaviour
 
     internal float coyoteTimer = 0f;
     internal float jumpBufferTimer = 0f;
+
+    public LayerMask enemyLayer;
 
     // states
     private IPlayerState currentState;
@@ -152,13 +155,19 @@ public class PlayerStateMachine : MonoBehaviour
             
         }
 
+        if (clubActivated == true)
+        {
+            SwitchState(new GroundPoundState(this));
+            clubActivated = false;
+        }
+
         // Deactivate shield if health <= 0
         if (diamondSkinCurrentHealth <= 0)
         {
             Debug.Log("diamond skin broken");
             diamondSkinActive = false;
             diamondSkin.gameObject.SetActive(false);
-            
+
         }
 
 
@@ -185,6 +194,9 @@ public class PlayerStateMachine : MonoBehaviour
                 }
                 
             }
+
+            
+
             if (Input.GetMouseButtonDown(1) && currentDashCharges > 0)
             {
                 Debug.Log("slashed");
@@ -363,6 +375,7 @@ public class PlayerStateMachine : MonoBehaviour
         Debug.Log("Ace power activated");
         hasActivated = true;
         gun.gameObject.SetActive(false);
+        ConsumePowerUp(ScannedCard.Ace);
     }
 
     void ActivateKing()
@@ -371,6 +384,7 @@ public class PlayerStateMachine : MonoBehaviour
         diamondSkinCurrentHealth = diamondSkinMaxHealth;
         diamondSkinActive = true;
         diamondSkin.SetActive(true);
+        ConsumePowerUp(ScannedCard.King);
     }
 
     void ActivateQueen()
@@ -380,12 +394,35 @@ public class PlayerStateMachine : MonoBehaviour
 
     void ActivateJack()
     {
+        
 
+        Debug.Log("Jack power activated (one-time)");
+
+        clubActivated = true;
+
+        ConsumePowerUp(ScannedCard.Jack);
     }
+
 
     void ActivateJoker()
     {
 
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (currentState is IPlayerPhysicsState physState)
+        {
+            physState.OnCollisionEnter2D(collision);
+        }
+    }
+
+    void ConsumePowerUp(ScannedCard card)
+    {
+        if (powerUpSlots[0] == card)
+            powerUpSlots[0] = ScannedCard.None;
+        else if (powerUpSlots[1] == card)
+            powerUpSlots[1] = ScannedCard.None;
     }
 
 }

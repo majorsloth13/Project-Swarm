@@ -32,4 +32,9 @@ public class DeathState : IPlayerState
     public void Update() { }
 
     public void Exit() { anim.SetBool("isHurt", false); }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

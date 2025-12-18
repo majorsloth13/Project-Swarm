@@ -92,5 +92,10 @@ public class HurtState : IPlayerState
         Debug.Log("is not invincible");
     }
 
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
+
 } 
 

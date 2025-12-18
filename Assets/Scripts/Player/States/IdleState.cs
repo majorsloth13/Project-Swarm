@@ -58,4 +58,9 @@ public class IdleState : IPlayerState, IPlayerPhysicsState
     }
 
     public void Exit() { }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

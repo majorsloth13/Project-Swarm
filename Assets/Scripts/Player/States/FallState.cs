@@ -52,4 +52,9 @@ public class FallState : IPlayerState, IPlayerPhysicsState
     }
 
     public void Exit() { anim.SetBool("isFalling", false); }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

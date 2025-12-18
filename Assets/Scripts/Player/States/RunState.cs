@@ -76,4 +76,9 @@ public class RunState : IPlayerState, IPlayerPhysicsState
     }
 
     public void Exit() { anim.SetBool("isRunning", false); }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

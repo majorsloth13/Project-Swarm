@@ -7,6 +7,7 @@ public class CardChooseUI : MonoBehaviour
     public GameObject cardUi;
     public Camera ARCam;
     public PlayerStateMachine machine;
+    public GameObject RawImage;
 
     public GameObject slot1UI; // UI element for first scanned card
     public GameObject slot2UI; // UI element for second scanned card
@@ -55,6 +56,7 @@ public class CardChooseUI : MonoBehaviour
    
     public void StartChooseUI()
     {
+        RawImage.SetActive(true);
         cardUi.SetActive(true);
         Time.timeScale = 0f;
         if (ARCam != null)
@@ -85,6 +87,8 @@ public class CardChooseUI : MonoBehaviour
             Time.timeScale = 1f;
             if (ARCam != null)
                 ARCam.enabled = false;
+            RawImage.SetActive(false);
+
         }
     }
 }
