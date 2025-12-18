@@ -30,11 +30,11 @@ public class DeathState : IPlayerState
             machine.audioSource.PlayOneShot(machine.deathSoundClip);
         }
 
-        if (anim != null)
+        /*if (anim != null)
         {
-            //anim.SetBool("isHurt", false);
-            anim.SetTrigger("hurt");
-        }
+            anim.SetBool("isHurt", true);
+            //anim.SetTrigger("hurt");
+        }*/
 
         machine.StartCoroutine(DeathRoutine());
     }
@@ -71,11 +71,11 @@ public class DeathState : IPlayerState
 
             // 2. Clear any lingering parameters
             anim.SetBool("isHurt", false);
-            anim.SetBool("isIdle", true);
+            //anim.SetBool("isIdle", true);
 
             // ResetTrigger only works if the transition hasn't happened yet.
             // To be safe, clear it here so it doesn't fire later.
-            anim.ResetTrigger("hurt");
+            //anim.ResetTrigger("hurt");
         }
     }
 

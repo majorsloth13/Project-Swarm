@@ -25,7 +25,6 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
         if (anim == null) anim = machine.GetComponent<Animator>();
 
         // Clear any triggers that might be "pending"
-        anim.ResetTrigger("hurtTrigger");
         anim.SetBool("isFalling", false);
 
         float moveInput = Input.GetAxisRaw("Horizontal");

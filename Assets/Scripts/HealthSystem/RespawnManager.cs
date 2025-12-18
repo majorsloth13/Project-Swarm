@@ -72,7 +72,7 @@ public class RespawnManager : MonoBehaviour
             yield return new WaitForSeconds(idleTransitionDelay);
             anim.SetTrigger("idle");
         }*/
-
+        
         Debug.Log("Player respawned at RespawnManager position.");
     }
 

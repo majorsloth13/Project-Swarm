@@ -18,11 +18,7 @@ public class GroundedIdleState : IGroundedSubState//, IPlayerPhysicsState
     public void Enter()
     {
         Debug.Log("entered grounded idle");
-        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
 
-        anim.SetBool("isRunning", false);
-        anim.SetBool("isWalkingAway", false);
-        anim.SetBool("isFalling", false);
     }
 
     public void Update()
