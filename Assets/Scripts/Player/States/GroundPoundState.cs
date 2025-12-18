@@ -28,31 +28,29 @@ public class GroundPoundState : IPlayerState, IPlayerPhysicsState
         isGroundPounding = true;
         startHeight = machine.transform.position.y;
 
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+        //rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+        rb.linearVelocity = Vector2.zero;
         rb.AddForce(Vector2.down * slamForce, ForceMode2D.Impulse);
 
+        anim.SetTrigger("GroundPound");
         Debug.Log("Ground pound ENTER");
     }
 
-    public void Update()
-    {
+    public void Update(){}
 
-    }
-    public void FixedUpdate()
-    {
-
-    }
+    public void FixedUpdate(){}
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!isGroundPounding) return;
+        if (!isGroundPounding) 
+            return;
 
         if (collision.collider.CompareTag("Ground"))
         {
             Debug.Log("Ground pound IMPACT");
             isGroundPounding = false;
             Impact();
-            machine.SwitchState(new IdleState(machine));
+            machine.SwitchState(new GroundedState(machine));
         }
     }
 
@@ -78,44 +76,16 @@ public class GroundPoundState : IPlayerState, IPlayerPhysicsState
                 enemyRb.AddForce(dir * knockbackForce, ForceMode2D.Impulse);
             }
         }
-
-        
     }
 
     public void Exit()
     {
         Debug.Log("Ground pound EXIT");
-        machine.clubActivated = false;
+        /*machine.clubActivated = false;
         if(machine.clubActivated == false)
         {
             Debug.Log("club activated false");
             anim.SetBool("isWalking", true);
-        }
-                
-
-        
-        
+        }*/
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

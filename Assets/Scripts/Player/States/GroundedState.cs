@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class GroundedState : IPlayerState, IPlayerPhysicsState
+public class GroundedState : IPlayerState//, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
+
+    public IGroundedSubState currentSubState;
 
     public GroundedState(PlayerStateMachine machine)
     {
@@ -16,10 +18,12 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
         machine.HasDoubleJump = true;
         machine.coyoteTimer = machine.coyoteTime;
 
+        SetSubState(new GroundedIdleState(machine, this));
+
         if (machine.TryConsumeJumpBuffer())
         {
             machine.SwitchState(new JumpState(machine));
-            return;
+           // return;
         }
     }
 
@@ -38,7 +42,9 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
             return;
         }
 
-        float input = Input.GetAxisRaw("Horizontal");
+        currentSubState?.Update();
+
+        /*float input = Input.GetAxisRaw("Horizontal");
         machine.FlipToGunDirection();
         if (Mathf.Abs(input) > 0.01f)
         {
@@ -47,19 +53,31 @@ public class GroundedState : IPlayerState, IPlayerPhysicsState
         else
         {
             machine.SwitchState(new IdleState(machine)); // assumes you have an IdleState
-        }
+        }*/
     }
 
     public void FixedUpdate()
     {
-        float input = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(input * machine.horizontalSpeed, rb.linearVelocity.y);
+        currentSubState?.FixedUpdate();
+        /*float input = Input.GetAxisRaw("Horizontal");
+        rb.linearVelocity = new Vector2(input * machine.horizontalSpeed, rb.linearVelocity.y);*/
     }
 
-    public void Exit() { }
+    public void Exit() 
+    {
+        currentSubState?.Exit();
+    }
 
-    public void OnCollisionEnter2D(Collision2D collision)
+    public void SetSubState(IGroundedSubState subState)
+    {
+        if (subState == null) return;
+
+        currentSubState?.Exit();
+        currentSubState = subState;
+        currentSubState.Enter();
+    }
+    /*public void OnCollisionEnter2D(Collision2D collision)
     {
 
-    }
+    }*/
 }

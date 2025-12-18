@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class IdleState : IPlayerState, IPlayerPhysicsState
 {
@@ -59,8 +59,8 @@ public class IdleState : IPlayerState, IPlayerPhysicsState
 
     public void Exit() { }
 
-    public void OnCollisionEnter2D(Collision2D collision)
+    /*public void OnCollisionEnter2D(Collision2D collision)
     {
 
     }
-}
+}*/
