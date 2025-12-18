@@ -24,12 +24,12 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
 
         // Directly set the upward velocity to make the player jump
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, machine.jumpForce); // use jumpHeight instead of jumpForce
-        
+
     }
 
     public void Update()
     {
-        
+
         // --- Always check double jump first ---
         if (Input.GetKeyDown(KeyCode.Space) && machine.HasDoubleJump)
         {
@@ -61,4 +61,11 @@ public class JumpState : IPlayerState, IPlayerPhysicsState
     public void Exit() { Debug.Log("JumpState ended");
         anim.SetBool("isjumping", false);
     }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
+    
+    
 }

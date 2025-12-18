@@ -145,4 +145,9 @@ public class MovementSlashState : IPlayerState, IPlayerPhysicsState
         
         Debug.Log("enetered idel fromdash");
     }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

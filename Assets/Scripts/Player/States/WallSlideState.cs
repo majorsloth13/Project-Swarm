@@ -72,4 +72,9 @@ public class WallSlideState : IPlayerState, IPlayerPhysicsState
     }
 
     public void Exit() { }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
 }

@@ -4,62 +4,118 @@ public class GroundPoundState : IPlayerState, IPlayerPhysicsState
 {
     private PlayerStateMachine machine;
     private Rigidbody2D rb;
-    private float groundPoundSpeed = 30f;
-    private bool hasLanded = false;
+    private Animator anim;
 
-    // Ground pound damage settings
-    private int damage = 20;
-    private float knockbackForce = 10f;
-    private float knockbackRadius = 2f;
+    private float startHeight;
+    private bool isGroundPounding;
 
-    public GroundPoundState(PlayerStateMachine machine, float speed = 30f)
+    public float slamForce = 25f;
+    public float radius = 2.5f;
+    public float minDamage = 1f;
+    //public float damageMultiplier = 2f;
+    public float knockbackForce = 10f;
+    
+
+    public GroundPoundState(PlayerStateMachine machine)
     {
         this.machine = machine;
         rb = machine.Rb;
-        groundPoundSpeed = speed;
+        anim = machine.GetComponent<Animator>();
     }
 
     public void Enter()
     {
-        rb.linearVelocity = new Vector2(0f, -groundPoundSpeed);
+        isGroundPounding = true;
+        startHeight = machine.transform.position.y;
+
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+        rb.AddForce(Vector2.down * slamForce, ForceMode2D.Impulse);
+
+        Debug.Log("Ground pound ENTER");
     }
 
     public void Update()
     {
-        if (machine.IsGrounded && rb.linearVelocity.y <= 0f)
-        {
-            hasLanded = true;
-            ApplyImpactDamage();
-        }
-    }
 
+    }
     public void FixedUpdate()
     {
-        if (!hasLanded)
-        {
-            rb.linearVelocity = new Vector2(0f, -groundPoundSpeed);
-        }
-        else
-        {
-            rb.linearVelocity = Vector2.zero;
-            machine.SwitchState(new GroundedState(machine));
-        }
+
     }
 
-    private void ApplyImpactDamage()
+    public void OnCollisionEnter2D(Collision2D collision)
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(machine.transform.position, knockbackRadius);
-        foreach (Collider2D hit in hits)
+        if (!isGroundPounding) return;
+
+        if (collision.collider.CompareTag("Ground"))
         {
-            //Enemy enemy = hit.GetComponent<Enemy>();
-            //if (enemy != null)
-            //{
-            //    // Knockback direction is away from player
-            //    Vector2 direction = (enemy.transform.position - machine.transform.position).normalized;
-            //    enemy.TakeDamage(damage, direction * knockbackForce);
-            //}
+            Debug.Log("Ground pound IMPACT");
+            isGroundPounding = false;
+            Impact();
+            machine.SwitchState(new IdleState(machine));
         }
     }
 
-    public void Exit() { }
+    private void Impact()
+    {
+        float fallDistance = startHeight - machine.transform.position.y;
+        float damage = minDamage + fallDistance;/* * damageMultiplier;*/
+
+        Collider2D[] enemies =
+            Physics2D.OverlapCircleAll(machine.transform.position, radius, machine.enemyLayer);
+
+        Debug.Log("Enemies hit: " + enemies.Length);
+
+        foreach (Collider2D enemy in enemies)
+        {
+            enemy.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+
+            Rigidbody2D enemyRb = enemy.GetComponent<Rigidbody2D>();
+            if (enemyRb)
+            {
+                Vector2 dir =
+                    (enemy.transform.position - machine.transform.position).normalized;
+                enemyRb.AddForce(dir * knockbackForce, ForceMode2D.Impulse);
+            }
+        }
+
+        
+    }
+
+    public void Exit()
+    {
+        Debug.Log("Ground pound EXIT");
+        machine.clubActivated = false;
+        if(machine.clubActivated == false)
+        {
+            Debug.Log("club activated false");
+            anim.SetBool("isWalking", true);
+        }
+                
+
+        
+        
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

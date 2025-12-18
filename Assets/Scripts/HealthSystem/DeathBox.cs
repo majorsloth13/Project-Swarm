@@ -4,30 +4,36 @@ using UnityEngine;
 
 public class DeathBox : MonoBehaviour
 {
-    [SerializeField] private float damageAmount = 999f; // Enough to kill the player
+    [SerializeField] private float damageAmount = 999f;
     [SerializeField] private Color gizmoColor = new Color(1f, 0f, 0f, 0.3f); // Semi-transparent red
 
-    protected virtual void OnTriggerEnter2D(Collider2D other)
-    {
-        
+    private bool hasHitPlayer;
 
-        // Check if the colliding object is the player
+    private void OnEnable()
+    {
+        // Reset when slashbox activates
+        hasHitPlayer = false;
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (hasHitPlayer)
+            return;
+
         if (other.CompareTag("Player"))
         {
-            
-            // Try to get the Health component from the player
             Health playerHealth = other.GetComponent<Health>();
             if (playerHealth != null)
             {
-                // Deal fatal damage
                 playerHealth.TakeDamage(damageAmount);
-                
-                
+                hasHitPlayer = true; // prevent multi-hits
             }
         }
     }
 
-    private void OnDrawGizmos()
+
+
+private void OnDrawGizmos()
     {
         // Set color for visualization in the editor
         Gizmos.color = gizmoColor;
